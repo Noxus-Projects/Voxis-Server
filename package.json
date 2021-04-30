@@ -1,0 +1,23 @@
+{
+  "name": "voice-server",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node . --production",
+    "build": "tsc",
+    "client": "ts-node-dev src/test-client.ts",
+    "dev": "ts-node-dev src/index.ts"
+  },
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "socket.io-client": "^4.0.1",
+    "ts-node-dev": "^1.1.6",
+    "tsconfig-paths": "^3.9.0",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "@types/node": "^15.0.1",
+    "socket.io": "^4.0.1"
+  }
+}
