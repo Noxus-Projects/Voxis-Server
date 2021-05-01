@@ -1,22 +1,29 @@
-import http, { IncomingMessage, ServerResponse } from 'http';
+import express, { Express } from 'express';
+import io, { Socket } from 'socket.io';
+import http from 'http';
 
-import IO from 'socket.io';
 import Middleware from './middleware';
+import API from './api';
 
 export default class Server {
-	private http: http.Server;
-	private io: IO.Server;
+	private app: Express;
+	private server: http.Server;
+	private io: io.Server;
 
 	constructor() {
-		this.http = http.createServer(this.handleRequest);
-		this.io = new IO.Server(this.http);
-
-		this.io.on('connection', this.handleConnection);
+		this.app = express();
+		this.server = http.createServer(this.app);
+		this.io = new io.Server(this.server);
 
 		this.io.use(Middleware.authorize);
+		this.io.on('connection', this.handleConnection);
+
+		this.app.get('/login', API.login);
+
+		this.app.use(API.notFound);
 	}
 
-	private handleConnection(client: IO.Socket) {
+	private handleConnection(client: Socket) {
 		console.log('Client connected!');
 
 		client.on('disconnect', () => {
@@ -24,12 +31,7 @@ export default class Server {
 		});
 	}
 
-	private handleRequest(req: IncomingMessage, res: ServerResponse) {
-		res.statusCode = 403;
-		res.end();
-	}
-
 	public start(port: number) {
-		this.http.listen(port, () => console.log(`Started server on port ${port}!`));
+		this.server.listen(port, () => console.log(`Started server on port ${port}!`));
 	}
 }
