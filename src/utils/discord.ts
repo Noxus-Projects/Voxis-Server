@@ -17,7 +17,7 @@ export default class Discord {
 			validateStatus: () => true,
 		});
 
-		return status === 401;
+		return status !== 401;
 	}
 
 	public async token(code: string) {

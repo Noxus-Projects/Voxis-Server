@@ -1,37 +1,20 @@
-import express, { Express } from 'express';
-import io, { Socket } from 'socket.io';
 import http from 'http';
 
-import Middleware from './middleware';
-import API from './api';
+import App from './app';
+import Socket from './socket';
 
 export default class Server {
-	private app: Express;
-	private server: http.Server;
-	private io: io.Server;
+	private http: http.Server;
+	private app: App;
+	private socket: Socket;
 
 	constructor() {
-		this.app = express();
-		this.server = http.createServer(this.app);
-		this.io = new io.Server(this.server);
-
-		this.io.use(Middleware.authorize);
-		this.io.on('connection', this.handleConnection);
-
-		this.app.get('/login', API.login);
-
-		this.app.use(API.notFound);
-	}
-
-	private handleConnection(client: Socket) {
-		console.log('Client connected!');
-
-		client.on('disconnect', () => {
-			console.log('Client disconnected!');
-		});
+		this.app = new App();
+		this.http = http.createServer(this.app.server);
+		this.socket = new Socket(this.http);
 	}
 
 	public start(port: number) {
-		this.server.listen(port, () => console.log(`Started server on port ${port}!`));
+		this.http.listen(port, () => console.log(`Started server on port ${port}!`));
 	}
 }

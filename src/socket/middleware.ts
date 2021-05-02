@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { ExtendedError } from 'socket.io/dist/namespace';
 
-import Discord from './utils/discord';
+import Discord from '../utils/discord';
 
 type Next = (err?: ExtendedError | undefined) => void;
 
