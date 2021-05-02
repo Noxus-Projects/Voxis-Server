@@ -9,12 +9,14 @@ export default class Middleware {
 	public static authorize(socket: Socket, next: Next): void {
 		const token = socket.handshake.auth.token;
 
-		Discord.exists(token).then((exists) => {
+		Discord.user(token).then(([data, exists]) => {
 			console.log('Token is valid: ' + exists);
 
 			if (!exists) {
 				return next(new Error('invalid token'));
 			}
+
+			socket.handshake.auth.user = data;
 
 			next();
 		});

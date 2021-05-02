@@ -10,4 +10,8 @@ const socket = io(URL, { autoConnect: false, auth: { token: 'rJvNsPK2siyXj6FHpYr
 
 socket.connect();
 
-socket.on('rooms', console.log);
+socket.on('connect', () => {
+	socket.emit('joinRoom', 'fakka');
+});
+
+socket.on('joinedRoom', console.log);
