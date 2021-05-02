@@ -5,6 +5,7 @@ import Middleware from './middleware';
 
 export default class WebSocket {
 	private io: io.Server;
+
 	constructor(server: http.Server) {
 		this.io = new io.Server(server);
 

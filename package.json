@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node . --production",
     "build": "tsc",
+    "test-build": "tsc --noEmit",
     "client": "ts-node-dev src/test-client.ts",
     "dev": "ts-node-dev src/index.ts"
   },
