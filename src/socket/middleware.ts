@@ -6,7 +6,7 @@ import Discord from '../utils/discord';
 type Next = (err?: ExtendedError | undefined) => void;
 
 export default class Middleware {
-	public static authorize(socket: Socket, next: Next) {
+	public static authorize(socket: Socket, next: Next): void {
 		const token = socket.handshake.auth.token;
 
 		Discord.exists(token).then((exists) => {

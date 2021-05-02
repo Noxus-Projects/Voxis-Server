@@ -14,7 +14,7 @@ export default class Server {
 		this.socket = new Socket(this.http);
 	}
 
-	public start(port: number) {
+	public start(port: number): void {
 		this.http.listen(port, () => console.log(`Started server on port ${port}!`));
 	}
 }

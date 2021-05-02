@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+import { OAuthTokenResponse } from '../models/discord';
+
 const request = axios.create({
 	baseURL: 'https://discord.com/api/v8/',
 });
@@ -20,7 +22,7 @@ export default class Discord {
 		return status !== 401;
 	}
 
-	public async token(code: string) {
+	public async token(code: string): Promise<OAuthTokenResponse> {
 		const params = new URLSearchParams();
 
 		params.append('client_id', this.clientID);
