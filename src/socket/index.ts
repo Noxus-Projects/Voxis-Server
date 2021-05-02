@@ -31,9 +31,13 @@ export default class WebSocket {
 		client.on('joinRoom', (data) => this.joinRoom(client, user, data));
 		client.on('leaveRoom', (data) => this.leaveRoom(client, user, data));
 
-		client.on('disconnect', () => {
-			console.log(`Client with id '${client.id}' disconnected!`);
-		});
+		client.on('voice', (data) => this.handleVoice(client, user, data));
+
+		client.on('disconnect', () => console.log(`Client with id '${client.id}' disconnected!`));
+	}
+
+	private handleVoice(client: Socket, user: User, data: string): void {
+		client.rooms.forEach((room) => client.to(room).emit('voice', data));
 	}
 
 	private joinRoom(client: Socket, user: User, data: string): void {
