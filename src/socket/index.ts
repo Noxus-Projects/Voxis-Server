@@ -1,52 +1,43 @@
-import io, { Socket } from 'socket.io';
+import { Socket, Server } from 'socket.io';
+import { ExtendedError } from 'socket.io/dist/namespace';
 import http from 'http';
 
-import Middleware from './middleware';
-import User from '../models/user';
+import Discord from '../utils/discord';
+import Client from './client';
 
-const avatarURL = (id: string, avatar: string) =>
-	`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
+type Next = (err?: ExtendedError | undefined) => void;
 
 export default class WebSocket {
-	private io: io.Server;
+	private io: Server;
 
 	constructor(server: http.Server) {
-		this.io = new io.Server(server);
+		this.io = new Server(server);
 
-		this.io.use(Middleware.authorize);
+		this.io.use(this.authorize);
 		this.io.on('connection', (client) => this.handleConnection(client));
 	}
 
 	private async handleConnection(client: Socket) {
 		console.log(`Client with id '${client.id}' connected!`);
 
-		const userData = client.handshake.auth.user;
-
-		const user: User = {
-			id: userData.id,
-			name: userData.username,
-			picture: avatarURL(userData.id, userData.avatar),
-		};
-
-		client.on('joinRoom', (data) => this.joinRoom(client, user, data));
-		client.on('leaveRoom', (data) => this.leaveRoom(client, user, data));
-
-		client.on('voice', (data) => this.handleVoice(client, user, data));
+		const event = new Client(client, this.io);
 
 		client.on('disconnect', () => console.log(`Client with id '${client.id}' disconnected!`));
 	}
 
-	private handleVoice(client: Socket, user: User, data: string): void {
-		client.rooms.forEach((room) => client.to(room).emit('voice', data));
-	}
+	private authorize(socket: Socket, next: Next): void {
+		const token = socket.handshake.auth.token;
 
-	private joinRoom(client: Socket, user: User, data: string): void {
-		client.join(data);
-		this.io.emit('joinedRoom', { room: data, user });
-	}
+		Discord.user(token).then(([data, exists]) => {
+			console.log('Token is valid: ' + exists);
 
-	private leaveRoom(client: Socket, user: User, data: string): void {
-		client.leave(data);
-		this.io.emit('leftRoom', { room: data, user });
+			if (!exists) {
+				return next(new Error('invalid token'));
+			}
+
+			socket.handshake.auth.user = data;
+
+			next();
+		});
 	}
 }

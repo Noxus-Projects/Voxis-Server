@@ -23,7 +23,7 @@ class Client {
 		});
 
 		this.socket.on('connect', () => {
-			micStream.on('data', (data) => this.socket.emit('voice', encoder.encode(data)));
+			micStream.on('data', (data) => this.socket.emit('voice', data));
 			this.socket.emit('joinRoom', 'fakka');
 		});
 
