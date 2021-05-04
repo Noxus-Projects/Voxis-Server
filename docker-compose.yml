@@ -1,7 +1,12 @@
 version: '3'
 services:
-  tempo:
-    image: xeeon/voice
-    container_name: voice-server
+  server:
+    image: guusvanmeerveld/voxis-server
+    container_name: voxis-server
     environment:
       - PORT=80
+      - CLIENT_ID=Discord client id
+      - CLIENT_SECRET=Discord client secret
+      - REDIRECT=Discord redirect page
+    volumes:
+      - ./data:./data
