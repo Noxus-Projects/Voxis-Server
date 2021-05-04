@@ -1,0 +1,7 @@
+version: '3'
+services:
+  tempo:
+    image: xeeon/voice
+    container_name: voice-server
+    environment:
+      - PORT=80
