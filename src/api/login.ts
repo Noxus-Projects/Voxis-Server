@@ -11,6 +11,6 @@ export default function login(req: Request, res: Response): void {
 
 	discord
 		.token(req.query.code as string)
-		.then((data) => res.json(data))
-		.catch((err) => res.json({ error: err }));
+		.then((data) => res.status(200).json(data))
+		.catch((err) => res.status(400).json({ error: err }));
 }

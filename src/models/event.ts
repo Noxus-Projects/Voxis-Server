@@ -14,4 +14,9 @@ export interface VoiceEvent {
 	data: Buffer;
 }
 
+export interface MessageEvent {
+	channel: string;
+	message: string;
+}
+
 export default Event;

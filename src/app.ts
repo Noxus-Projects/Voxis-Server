@@ -5,6 +5,8 @@ import rateLimit from 'express-rate-limit';
 import login from './api/login';
 import notFound from './api/notFound';
 
+import cors from 'cors';
+
 export default class App {
 	private api: Express;
 	public server: Express;
@@ -12,6 +14,8 @@ export default class App {
 	constructor() {
 		this.server = express();
 		this.api = express();
+
+		this.server.use(cors());
 
 		this.server.use('/api', this.api);
 

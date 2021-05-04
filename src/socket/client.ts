@@ -6,20 +6,20 @@ const avatarURL = (id: string, avatar: string) =>
 	`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
 
 export default class Client {
-	server;
-	client;
-	user: User;
+	private server;
+	private client;
+	public user: User;
 
 	constructor(client: Socket, server: Server) {
 		this.server = server;
 		this.client = client;
 
-		const userData = client.handshake.auth.user;
+		const data = client.handshake.auth.user;
 
 		this.user = {
-			id: userData.id,
-			name: userData.username,
-			picture: avatarURL(userData.id, userData.avatar),
+			id: data.id,
+			name: data.username,
+			picture: avatarURL(data.id, data.avatar),
 		};
 
 		client.on('joinRoom', (data) => this.joinRoom(data));

@@ -2,27 +2,54 @@ import { Socket, Server } from 'socket.io';
 import { ExtendedError } from 'socket.io/dist/namespace';
 import http from 'http';
 
+import { MessageEvent } from '../models/event';
+import Database from '../utils/database';
 import Discord from '../utils/discord';
+import User from '../models/user';
 import Client from './client';
 
 type Next = (err?: ExtendedError | undefined) => void;
 
 export default class WebSocket {
 	private io: Server;
+	private db: Database;
 
 	constructor(server: http.Server) {
-		this.io = new Server(server);
+		this.io = new Server(server, {
+			cors: {
+				origin: 'https://zuidnederland.be',
+				methods: ['GET', 'POST'],
+			},
+		});
+
+		this.db = new Database();
 
 		this.io.use(this.authorize);
 		this.io.on('connection', (client) => this.handleConnection(client));
 	}
 
-	private async handleConnection(client: Socket) {
-		console.log(`Client with id '${client.id}' connected!`);
+	private async handleConnection(socket: Socket) {
+		console.log(`Client with id '${socket.id}' connected!`);
 
-		const event = new Client(client, this.io);
+		const client = new Client(socket, this.io);
 
-		client.on('disconnect', () => console.log(`Client with id '${client.id}' disconnected!`));
+		socket.on('message', (data) => this.handleMessage(client.user, data));
+		socket.on('disconnect', () => console.log(`Client with id '${socket.id}' disconnected!`));
+	}
+
+	private handleMessage(user: User, data: MessageEvent) {
+		const message = {
+			author: user,
+			timestamp: new Date(),
+			content: data.message,
+		};
+
+		this.io.emit('message', {
+			...message,
+			channel: data.channel,
+		});
+
+		this.db.push(data.channel, message);
 	}
 
 	private authorize(socket: Socket, next: Next): void {
