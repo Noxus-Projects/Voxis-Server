@@ -10,7 +10,9 @@ export default class PermissionsManager {
 		this.client = options.client;
 		this.database = options.database;
 
-		this.client.on('getPermissions', (data, callback) => this.getPermissions(data, callback));
+		this.client.on('getPermissions', (data, callback) =>
+			this.getPermissions(data, callback ?? console.log)
+		);
 	}
 
 	private getPermissions(id: string, reply: (permissions: Permission[]) => void) {

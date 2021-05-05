@@ -10,5 +10,5 @@ export interface Message {
 	content: string;
 	author: string;
 	id: string;
-	timestamp: Date;
+	created: Date;
 }

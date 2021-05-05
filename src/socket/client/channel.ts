@@ -1,4 +1,4 @@
-import { EditChannelEvent } from '@models/event';
+import { ChannelEvents } from '@models/event';
 import { Permission } from '@models/user';
 import Channel from '@models/channel';
 
@@ -16,10 +16,14 @@ export default class ChannelManager {
 		this.database = options.database;
 		this.user = options.user;
 
-		this.client.on('getChannel', (data, callback) => this.get(data, callback));
-		this.client.on('createChannel', (data, callback) => this.create(data, callback));
-		this.client.on('removeChannel', (data, callback) => this.remove(data, callback));
-		this.client.on('editChannel', (data, callback) => this.edit(data, callback));
+		this.client.on('getChannel', (data, callback?) => this.get(data, callback ?? console.log));
+		this.client.on('createChannel', (data, callback?) =>
+			this.create(data, callback ?? console.log)
+		);
+		this.client.on('removeChannel', (data, callback?) =>
+			this.remove(data, callback ?? console.log)
+		);
+		this.client.on('editChannel', (data, callback?) => this.edit(data, callback ?? console.log));
 	}
 
 	private remove(id: string, reply: (message: string) => void) {
@@ -38,7 +42,7 @@ export default class ChannelManager {
 		this.server.emit('removedChannel');
 	}
 
-	private edit(options: EditChannelEvent, reply: (message: string) => void) {
+	private edit(options: ChannelEvents.Edit, reply: (message: string) => void) {
 		if (!this.database.channels.get(options.id)) {
 			reply('There is no channel with that id.');
 			return;
@@ -54,7 +58,12 @@ export default class ChannelManager {
 		this.server.emit('updatedChannel', updated);
 	}
 
-	private get(id: string | null, reply: (channel: Channel | Channel[]) => void) {
+	private get(id: string | null, reply: (channel: Channel | Channel[] | string) => void) {
+		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNEL)) {
+			reply('You are not allowed to see this channel.');
+			return;
+		}
+
 		reply(id ? this.database.channels.get(id) : this.database.channels.get());
 	}
 

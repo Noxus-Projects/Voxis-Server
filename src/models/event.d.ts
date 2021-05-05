@@ -9,7 +9,7 @@ export interface VoiceEvent {
 }
 
 export namespace MessageEvents {
-	export interface MessageEvent {
+	export interface Message {
 		/**
 		 * The channels id.
 		 */
@@ -20,7 +20,7 @@ export namespace MessageEvents {
 		message: string;
 	}
 
-	export interface EditMessageEvent {
+	export interface Edit {
 		/**
 		 * The channels id.
 		 */
@@ -36,7 +36,9 @@ export namespace MessageEvents {
 	}
 }
 
-export interface EditChannelEvent {
-	id: string;
-	name: string;
+export namespace ChannelEvents {
+	interface Edit {
+		id: string;
+		name: string;
+	}
 }

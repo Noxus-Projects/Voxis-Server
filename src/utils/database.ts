@@ -97,7 +97,7 @@ class MessageManager {
 	 * Edit a given message in a given channel.
 	 * @param options - The edit options.
 	 */
-	public edit(options: MessageEvents.EditMessageEvent): Message {
+	public edit(options: MessageEvents.Edit): Message {
 		const messages = this.db.get('channels').get(options.channel).get('messages');
 		const old = messages.get(options.id).value();
 

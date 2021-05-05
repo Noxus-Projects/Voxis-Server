@@ -15,13 +15,15 @@ export default class MessagesManager {
 		this.database = options.database;
 
 		this.client.on('sendMessage', (data) => this.sendMessage(data));
-		this.client.on('editMessage', (data, callback) => this.editMessage(data, callback));
+		this.client.on('editMessage', (data, callback) =>
+			this.editMessage(data, callback ?? console.log)
+		);
 	}
 
-	private sendMessage(data: MessageEvents.MessageEvent) {
+	private sendMessage(data: MessageEvents.Message) {
 		const message = {
 			author: this.user.id,
-			timestamp: new Date(),
+			created: new Date(),
 			content: data.message,
 			id: Date.now().toString(),
 		};
@@ -34,7 +36,7 @@ export default class MessagesManager {
 		this.database.messages.push(data.channel, message);
 	}
 
-	private editMessage(data: MessageEvents.EditMessageEvent, reply: (message: string) => void) {
+	private editMessage(data: MessageEvents.Edit, reply: (message: string) => void) {
 		const message = this.database.messages.get(data.channel, data.id);
 
 		if (message.author !== this.user.id) {
