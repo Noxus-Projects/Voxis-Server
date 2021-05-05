@@ -9,7 +9,7 @@
     "test-build": "tsc --noEmit",
     "lint": "eslint src",
     "client": "ts-node-dev src/test.ts",
-    "dev": "ts-node-dev -r tsconfig-paths/register src/index.ts"
+    "dev": "ts-node-dev -r tsconfig-paths/register src"
   },
   "devDependencies": {
     "@types/express": "^4.17.11",

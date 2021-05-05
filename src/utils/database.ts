@@ -1,3 +1,4 @@
+import { MessageEvents } from '@models/event';
 import low from 'lowdb';
 import FileSync from 'lowdb/adapters/FileSync';
 
@@ -47,7 +48,7 @@ class ChannelManager {
 		if (exists) return;
 
 		const channel = {
-			messages: [],
+			messages: {},
 			id: Date.now().toString(),
 			created: new Date(),
 			creator: creator.id,
@@ -84,6 +85,38 @@ class ChannelManager {
 			.find((channel) => channel.id === id)
 			.value();
 	}
+}
+
+class MessageManager {
+	private db: DB;
+	constructor(database: DB) {
+		this.db = database;
+	}
+
+	/**
+	 * Edit a given message in a given channel.
+	 * @param options - The edit options.
+	 */
+	public edit(options: MessageEvents.EditMessageEvent): Message {
+		const messages = this.db.get('channels').get(options.channel).get('messages');
+		const old = messages.get(options.id).value();
+
+		const updated = { ...old, content: options.updated };
+
+		messages.set(options.id, updated).write();
+
+		return updated;
+	}
+
+	/**
+	 * Get a message by its id and channel id.
+	 * @param channel - The channels id.
+	 * @param id - The message id.
+	 * @returns The requested message.
+	 */
+	public get(channel: string, id: string): Message {
+		return this.db.get('channels').get(channel).get('messages').get(id).value();
+	}
 
 	/**
 	 * Push a message to a text channel.
@@ -95,7 +128,7 @@ class ChannelManager {
 			.get('channels')
 			.find((channel) => channel.id === id)
 			.get('messages')
-			.push(message)
+			.set(message.id, message)
 			.write();
 	}
 }
@@ -107,16 +140,22 @@ class PermissionManager {
 	}
 
 	/**
+	 * Check if a user has a given permission.
+	 * @param id - The users id.
+	 * @param permission - The permission.
+	 * @returns Whether or not the user has the permission.
+	 */
+	public has(id: string, permission: Permission): boolean {
+		return this.db.get('users').get(id).get('permissions').has(permission).value();
+	}
+
+	/**
 	 * Get a users permissions.
 	 * @param id - The users id.
 	 * @returns The requested permissions.
 	 */
 	public get(id: string): Permission[] {
-		return this.db
-			.get('users')
-			.find((user) => user.id === id)
-			.get('permissions')
-			.value();
+		return this.db.get('users').get(id).get('permissions').value();
 	}
 
 	/**
@@ -195,6 +234,7 @@ export default class Database {
 	private db: DB;
 
 	public channels: ChannelManager;
+	public messages: MessageManager;
 	public permissions: PermissionManager;
 	public users: UserManager;
 
@@ -207,5 +247,6 @@ export default class Database {
 		this.channels = new ChannelManager(this.db);
 		this.permissions = new PermissionManager(this.db);
 		this.users = new UserManager(this.db);
+		this.messages = new MessageManager(this.db);
 	}
 }

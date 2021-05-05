@@ -1,15 +1,14 @@
-import User from './user';
-
 export default interface Channel {
 	name: string;
 	id: string;
-	messages: Message[];
+	messages: Record<string, Message>;
 	created: Date;
 	creator: string;
 }
 
 export interface Message {
 	content: string;
-	author: User;
+	author: string;
+	id: string;
 	timestamp: Date;
 }
