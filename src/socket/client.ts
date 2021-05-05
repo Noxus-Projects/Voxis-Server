@@ -61,7 +61,7 @@ class ChannelManager {
 	private removeChannel(id: string, reply: (message: string) => void) {
 		const permissions = this.database.permissions.get(this.user.id);
 
-		if (!permissions || !permissions.includes(Permission.MANAGE_CHANNELS)) {
+		if (!permissions || !permissions.includes(Permission.REMOVE_CHANNEL)) {
 			reply('You are not permitted to remove that channel.');
 			return;
 		}
@@ -84,7 +84,7 @@ class ChannelManager {
 
 		const permissions = this.database.permissions.get(this.user.id);
 
-		if (!permissions || !permissions.includes(Permission.MANAGE_CHANNELS)) {
+		if (!permissions || !permissions.includes(Permission.EDIT_CHANNEL)) {
 			reply('You are not permitted to edit that channel.');
 			return;
 		}
@@ -101,7 +101,7 @@ class ChannelManager {
 	private createChannel(name: string, reply: (message: string) => void) {
 		const permissions = this.database.permissions.get(this.user.id);
 
-		if (!permissions || !permissions.includes(Permission.MANAGE_CHANNELS)) {
+		if (!permissions || !permissions.includes(Permission.CREATE_CHANNEL)) {
 			reply('You are not permitted to create a channel.');
 			return;
 		}

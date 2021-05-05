@@ -6,6 +6,12 @@ export default interface User {
 }
 
 export enum Permission {
-	MANAGE_OTHERS = 1,
-	MANAGE_CHANNELS = 2,
+	MUTE_OTHERS = 1,
+	DISCONNECT_OTHERS = 2,
+	DEAFEN_OTHERS = 3,
+	MOVE_OTHERS = 4,
+	EDIT_CHANNEL = 5,
+	CREATE_CHANNEL = 6,
+	REMOVE_CHANNEL = 7,
+	CREATE_ROOM = 8,
 }
