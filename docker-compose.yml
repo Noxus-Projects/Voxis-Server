@@ -9,4 +9,4 @@ services:
       - CLIENT_SECRET=Discord client secret
       - REDIRECT=Discord redirect page
     volumes:
-      - ./data:./data
+      - ./data:/app/data
