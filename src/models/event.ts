@@ -10,12 +10,18 @@ export interface RoomEvent {
 }
 
 export interface VoiceEvent {
-	user: User;
+	user: string;
 	data: Buffer;
 }
 
 export interface MessageEvent {
+	/**
+	 * The channels id.
+	 */
 	channel: string;
+	/**
+	 * The message that needs to be sent.
+	 */
 	message: string;
 }
 

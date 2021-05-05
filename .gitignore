@@ -3,3 +3,4 @@ dist
 data
 .env
 yarn-error.log
+src/test.ts
