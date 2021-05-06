@@ -27,7 +27,7 @@ export default class ChannelManager {
 	}
 
 	private remove(id: string, reply: (message: string) => void) {
-		if (this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
+		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
 			reply('You are not permitted to remove that channel.');
 			return;
 		}
@@ -43,13 +43,13 @@ export default class ChannelManager {
 	}
 
 	private edit(options: ChannelEvents.Edit, reply: (message: string) => void) {
-		if (!this.database.channels.get(options.id)) {
-			reply('There is no channel with that id.');
+		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
+			reply('You are not permitted to edit that channel.');
 			return;
 		}
 
-		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
-			reply('You are not permitted to edit that channel.');
+		if (!this.database.channels.get(options.id)) {
+			reply('There is no channel with that id.');
 			return;
 		}
 
@@ -60,7 +60,7 @@ export default class ChannelManager {
 
 	private get(id: string | null, reply: (channel: Channel | Channel[] | string) => void) {
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNEL)) {
-			reply('You are not allowed to see this channel.');
+			reply('You are not allowed to see any channels.');
 			return;
 		}
 
@@ -68,7 +68,7 @@ export default class ChannelManager {
 	}
 
 	private create(name: string, reply: (message: string) => void) {
-		if (this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
+		if (!this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
 			reply('You are not permitted to create a channel.');
 			return;
 		}

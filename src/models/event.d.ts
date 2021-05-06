@@ -17,7 +17,7 @@ export namespace MessageEvents {
 		/**
 		 * The message that needs to be sent.
 		 */
-		message: string;
+		id: string;
 	}
 
 	export interface Edit {
