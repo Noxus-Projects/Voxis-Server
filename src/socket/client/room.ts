@@ -14,13 +14,13 @@ export default class RoomManager {
 		this.client.on('leaveRoom', (data) => this.leaveRoom(data));
 	}
 
-	private joinRoom(data: string): void {
-		this.client.join(data);
-		this.server.emit('joinedRoom', { room: data, user: this.user.id });
+	private joinRoom(room: string): void {
+		this.client.join(room);
+		this.server.emit('joinedRoom', { room, user: this.user.id });
 	}
 
-	private leaveRoom(data: string): void {
-		this.client.leave(data);
-		this.server.emit('leftRoom', { room: data, user: this.user.id });
+	private leaveRoom(room: string): void {
+		this.client.leave(room);
+		this.server.emit('leftRoom', { room, user: this.user.id });
 	}
 }

@@ -18,14 +18,20 @@ export default class UserManager {
 	}
 
 	/**
+	 * Edit a users nickname.
+	 * @param id - The users id.
+	 * @param updated - The new nickname.
+	 */
+	public editNickname(id: string, updated: string): void {
+		this.db.get('users').get(id).set('nickname', updated).write();
+	}
+
+	/**
 	 * Get a user by its id.
 	 * @param id - The users id.
 	 */
-	public get(id: string) {
-		this.db
-			.get('users')
-			.find((user) => user.id === id)
-			.value();
+	public get(id: string): User | undefined {
+		return this.db.get('users').get(id).value();
 	}
 
 	/**

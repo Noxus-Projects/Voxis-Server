@@ -28,7 +28,7 @@ export default class PermissionManager {
 	}
 
 	/**
-	 * Remove a permission to a user.
+	 * Remove permissions from a user.
 	 * @param id - The users id.
 	 * @param permission The permission to add.
 	 */

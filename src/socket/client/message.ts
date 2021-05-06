@@ -15,20 +15,14 @@ export default class MessagesManager {
 		this.user = options.user;
 		this.database = options.database;
 
-		this.client.on('sendMessage', (data, callback) =>
-			this.sendMessage(data, callback ?? console.log)
-		);
-
-		this.client.on('editMessage', (data, callback) =>
-			this.editMessage(data, callback ?? console.log)
-		);
-
-		this.client.on('removeMessage', (data, callback) =>
-			this.removeMessage(data, callback ?? console.log)
-		);
+		this.client.on('sendMessage', (data, callback) => this.sendMessage(data, callback));
+		this.client.on('editMessage', (data, callback) => this.editMessage(data, callback));
+		this.client.on('removeMessage', (data, callback) => this.removeMessage(data, callback));
 	}
 
 	private sendMessage(data: MessageEvents.Message, reply: (message: string) => void) {
+		if (!reply) return;
+
 		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
 			reply('You are not permitted to send messages.');
 			return;
@@ -56,7 +50,9 @@ export default class MessagesManager {
 		});
 	}
 
-	public removeMessage(data: MessageEvents.Message, reply: (message: string) => void): void {
+	public removeMessage(data: MessageEvents.Remove, reply: (message: string) => void): void {
+		if (!reply) return;
+
 		const message = this.database.messages.get(data.channel, data.id);
 
 		if (!message) {
@@ -77,6 +73,8 @@ export default class MessagesManager {
 	}
 
 	private editMessage(data: MessageEvents.Edit, reply: (message: string) => void) {
+		if (!reply) return;
+
 		const message = this.database.messages.get(data.channel, data.id);
 
 		if (!message) {

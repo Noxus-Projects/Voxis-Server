@@ -16,17 +16,15 @@ export default class ChannelManager {
 		this.database = options.database;
 		this.user = options.user;
 
-		this.client.on('getChannel', (data, callback?) => this.get(data, callback ?? console.log));
-		this.client.on('createChannel', (data, callback?) =>
-			this.create(data, callback ?? console.log)
-		);
-		this.client.on('removeChannel', (data, callback?) =>
-			this.remove(data, callback ?? console.log)
-		);
-		this.client.on('editChannel', (data, callback?) => this.edit(data, callback ?? console.log));
+		this.client.on('getChannel', (data, callback?) => this.get(data, callback));
+		this.client.on('createChannel', (data, callback?) => this.create(data, callback));
+		this.client.on('removeChannel', (data, callback?) => this.remove(data, callback));
+		this.client.on('editChannel', (data, callback?) => this.edit(data, callback));
 	}
 
 	private remove(id: string, reply: (message: string) => void) {
+		if (!reply) return;
+
 		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
 			reply('You are not permitted to remove that channel.');
 			return;
@@ -43,6 +41,8 @@ export default class ChannelManager {
 	}
 
 	private edit(options: ChannelEvents.Edit, reply: (message: string) => void) {
+		if (!reply) return;
+
 		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
 			reply('You are not permitted to edit that channel.');
 			return;
@@ -59,7 +59,9 @@ export default class ChannelManager {
 	}
 
 	private get(id: string | null, reply: (channel: Channel | Channel[] | string) => void) {
-		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNEL)) {
+		if (!reply) return;
+
+		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
 			reply('You are not allowed to see any channels.');
 			return;
 		}
@@ -68,6 +70,8 @@ export default class ChannelManager {
 	}
 
 	private create(name: string, reply: (message: string) => void) {
+		if (!reply) return;
+
 		if (!this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
 			reply('You are not permitted to create a channel.');
 			return;
@@ -81,6 +85,5 @@ export default class ChannelManager {
 		}
 
 		this.server.emit('createdChannel', channel);
-		reply(`Created channel ${channel.name}.`);
 	}
 }

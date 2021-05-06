@@ -1,15 +1,16 @@
-export interface RoomEvent {
-	user: string;
-	room: string;
-}
-
-export interface VoiceEvent {
-	user: string;
-	data: Buffer;
-}
-
 export namespace MessageEvents {
 	export interface Message {
+		/**
+		 * The channels id.
+		 */
+		channel: string;
+		/**
+		 * The message that needs to be sent.
+		 */
+		id: string;
+	}
+
+	export interface Remove {
 		/**
 		 * The channels id.
 		 */
@@ -36,8 +37,46 @@ export namespace MessageEvents {
 	}
 }
 
+export namespace NicknameEvents {
+	export interface Edit {
+		/**
+		 * The new nickname.
+		 */
+		updated: string;
+
+		/**
+		 * The users id.
+		 */
+		user?: string;
+	}
+}
+
+export namespace PermissionEvents {
+	export interface Add {
+		/**
+		 * The users id.
+		 */
+		user?: string;
+		/**
+		 * The new permission(s).
+		 */
+		updated: Permission[];
+	}
+
+	export interface Remove {
+		/**
+		 * The users id.
+		 */
+		user?: string;
+		/**
+		 * The new permission(s).
+		 */
+		removed: Permission[];
+	}
+}
+
 export namespace ChannelEvents {
-	interface Edit {
+	export interface Edit {
 		id: string;
 		name: string;
 	}

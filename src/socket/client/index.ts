@@ -8,6 +8,7 @@ import RoomManager from './room';
 import VoiceManager from './voice';
 import PermissionsManager from './permission';
 import MessagesManager from './message';
+import NicknameManager from './nickname';
 
 const avatarURL = (id: string, avatar: string) =>
 	`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
@@ -25,11 +26,14 @@ export default class Client {
 	constructor(client: Socket, server: Server, database: Database) {
 		const data = client.handshake.auth.user;
 
+		const current = database.users.get(data.id);
+
 		this.user = {
 			id: data.id,
 			name: data.username,
 			picture: avatarURL(data.id, data.avatar),
-			permissions: database.permissions.get(data.id),
+			nickname: current?.nickname ?? '',
+			permissions: current?.permissions ?? [],
 		};
 
 		database.users.create(this.user);
@@ -41,6 +45,7 @@ export default class Client {
 			user: this.user,
 		};
 
+		new NicknameManager(options);
 		new RoomManager(options);
 		new VoiceManager(options);
 		new ChannelManager(options);

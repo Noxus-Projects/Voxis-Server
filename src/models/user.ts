@@ -2,6 +2,7 @@ export default interface User {
 	name: string;
 	picture: string;
 	id: string;
+	nickname: string;
 	permissions: Permission[];
 }
 
@@ -11,12 +12,14 @@ export enum Permission {
 	DEAFEN_OTHERS = 3,
 	MOVE_OTHERS = 4,
 	EDIT_CHANNEL = 5,
-	SEE_CHANNEL = 6,
+	SEE_CHANNELS = 6,
 	CREATE_CHANNEL = 7,
 	REMOVE_CHANNEL = 8,
 	CREATE_ROOM = 9,
-	MANAGE_WHITELIST = 10,
-	SEND_MESSAGE = 11,
-	REMOVE_MESSAGE = 12,
-	MANAGE_PERMISSIONS = 13,
+	JOIN_ROOM = 10,
+	MANAGE_WHITELIST = 11,
+	SEND_MESSAGE = 12,
+	REMOVE_MESSAGE = 13,
+	MANAGE_PERMISSIONS = 14,
+	EDIT_NICKNAME = 15,
 }
