@@ -1,6 +1,6 @@
 export default interface User {
 	name: string;
-	picture: string;
+	avatar: string;
 	id: string;
 	nickname: string;
 	permissions: Permission[];

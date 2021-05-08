@@ -1,6 +1,6 @@
 import express, { Express } from 'express';
-
 import rateLimit from 'express-rate-limit';
+import chalk from 'chalk';
 
 import login from './api/login';
 import notFound from './api/notFound';
@@ -14,6 +14,15 @@ export default class App {
 	constructor() {
 		this.server = express();
 		this.api = express();
+
+		this.server.use((req, res, next) => {
+			const method = chalk.yellow(req.method.toUpperCase());
+			const location = chalk.green(req.url);
+			const ip = chalk.cyan(req.socket.remoteAddress);
+
+			console.log(`${method} ${location} ${ip}`);
+			next();
+		});
 
 		this.server.use(cors());
 

@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import http from 'http';
 
 import App from './app';
@@ -14,6 +15,6 @@ export default class Server {
 	}
 
 	public start(port: number): void {
-		this.http.listen(port, () => console.log(`Started server on port ${port}!`));
+		this.http.listen(port, () => console.log(chalk.yellow('WEB'), chalk.cyan(port)));
 	}
 }

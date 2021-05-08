@@ -10,9 +10,6 @@ import PermissionsManager from './permission';
 import MessagesManager from './message';
 import NicknameManager from './nickname';
 
-const avatarURL = (id: string, avatar: string) =>
-	`https://cdn.discordapp.com/avatars/${id}/${avatar}.png`;
-
 export interface ClientOptions {
 	client: Socket;
 	server: Server;
@@ -31,7 +28,7 @@ export default class Client {
 		this.user = {
 			id: data.id,
 			name: data.username,
-			picture: avatarURL(data.id, data.avatar),
+			avatar: data.avatar,
 			nickname: current?.nickname ?? '',
 			permissions: current?.permissions ?? [],
 		};

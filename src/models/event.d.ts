@@ -37,6 +37,19 @@ export namespace MessageEvents {
 	}
 }
 
+export namespace RoomEvents {
+	export interface Change {
+		/**
+		 * The users id.
+		 */
+		user?: string;
+		/**
+		 * The rooms name
+		 */
+		room: string;
+	}
+}
+
 export namespace NicknameEvents {
 	export interface Edit {
 		/**

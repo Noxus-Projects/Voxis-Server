@@ -11,7 +11,7 @@ export default class Discord {
 	private clientSecret = process.env.CLIENT_SECRET ?? '';
 	private redirect = process.env.REDIRECT ?? '';
 
-	public static async user(token: string): Promise<[UserInfo, boolean]> {
+	public static async user(token: string): Promise<[UserInfo | void, boolean]> {
 		const { data, status } = await request('users/@me', {
 			headers: {
 				Authorization: `Bearer ${token}`,

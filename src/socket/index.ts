@@ -1,5 +1,6 @@
 import { Socket, Server } from 'socket.io';
 import { ExtendedError } from 'socket.io/dist/namespace';
+import chalk from 'chalk';
 import http from 'http';
 
 import Database from '@utils/database';
@@ -7,6 +8,9 @@ import Discord from '@utils/discord';
 import Client from './client';
 
 type Next = (err?: ExtendedError) => void;
+
+const connectionLog = (state: string, id: string) =>
+	console.log(`${chalk.yellow('SOCKET')} ${state} ${chalk.cyan(id)}`);
 
 export default class WebSocket {
 	private io: Server;
@@ -35,28 +39,29 @@ export default class WebSocket {
 	}
 
 	private async handleConnection(socket: Socket) {
-		console.log(`Client with id '${socket.id}' connected!`);
+		const user = socket.handshake.auth.user;
+
+		connectionLog(chalk.green('•'), user.username);
 
 		new Client(socket, this.io, this.db);
 
-		socket.on('disconnect', () => console.log(`Client with id '${socket.id}' disconnected!`));
+		socket.on('disconnect', () => connectionLog(chalk.red('•'), user.username));
 	}
 
 	private authorize(socket: Socket, next: Next): void {
 		const token = socket.handshake.auth.token;
 
 		Discord.user(token).then(([data, exists]) => {
-			console.log('Token is valid: ' + exists);
-
-			if (!exists) {
+			if (!exists || !data) {
 				return next(new Error('invalid token'));
 			}
 
+			connectionLog(chalk.yellow('•'), data.username);
+
 			const whitelist = this.db.whitelist.has(data.id);
 
-			console.log('User is on whitelist: ' + whitelist);
-
 			if (!whitelist) {
+				connectionLog(chalk.red('•'), data.username);
 				return next(new Error('not on whitelist'));
 			}
 
