@@ -65,6 +65,7 @@ services:
       - REDIRECT = The Discord application's redirect uri
     volumes:
       - ./data:/app/data
+      - ./public:/app/public
 ```
 
 Then, start the container using the following command:

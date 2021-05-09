@@ -10,7 +10,7 @@ import Client from './client';
 type Next = (err?: ExtendedError) => void;
 
 const connectionLog = (state: string, id: string) =>
-	console.log(`${chalk.yellow('SOCKET')} ${state} ${chalk.cyan(id)}`);
+	console.log(chalk.yellow('SOCKET'), state, chalk.cyan(id));
 
 export default class WebSocket {
 	private io: Server;
@@ -51,16 +51,17 @@ export default class WebSocket {
 	private authorize(socket: Socket, next: Next): void {
 		const token = socket.handshake.auth.token;
 
+		connectionLog(chalk.yellow('•'), `Unknown user (${socket.id})`);
+
 		Discord.user(token).then(([data, exists]) => {
 			if (!exists || !data) {
+				connectionLog(chalk.red('•'), `Unknown user (${socket.id})`);
 				return next(new Error('invalid token'));
 			}
 
-			connectionLog(chalk.yellow('•'), data.username);
+			const isOnWhitelist = this.db.whitelist.has(data.id);
 
-			const whitelist = this.db.whitelist.has(data.id);
-
-			if (!whitelist) {
+			if (!isOnWhitelist) {
 				connectionLog(chalk.red('•'), data.username);
 				return next(new Error('not on whitelist'));
 			}

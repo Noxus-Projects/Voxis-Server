@@ -1,4 +1,4 @@
-import express, { Express, Request } from 'express';
+import express, { Express, NextFunction, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import chalk from 'chalk';
 import cors from 'cors';
@@ -9,10 +9,16 @@ import notFound from './api/notFound';
 import login from './api/login';
 
 const getIpAdress = (req: Request) =>
-	(req.headers['cf-connecting-ip'] ? req.headers['cf-connecting-ip'][0] : null) ??
-	(req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'][0] : null) ??
-	req.socket.remoteAddress ??
-	'';
+	(req.headers['cf-connecting-ip'] ??
+		req.headers['x-forwarded-for'] ??
+		req.socket.remoteAddress ??
+		'') as string;
+
+const limiter = rateLimit({
+	windowMs: 5 * 60 * 1000,
+	max: 30,
+	keyGenerator: getIpAdress,
+});
 
 export default class App {
 	private api: Express;
@@ -22,27 +28,19 @@ export default class App {
 		this.server = express();
 		this.api = express();
 
-		this.server.use((req, res, next) => {
-			const method = chalk.yellow(req.method.toUpperCase());
-			const location = chalk.green(req.url);
-			const ip = chalk.cyan(getIpAdress(req));
+		/**	Log every incoming request to the console. */
+		this.server.use(this.logInfo);
 
-			console.log(`${method} ${location} ${ip}`);
-			next();
-		});
-
-		this.server.use(cors());
-
-		this.server.use('/api', this.api);
-
+		/**	Serve static files from public folder. */
 		this.server.use(express.static(Base('public')));
 
-		const limiter = rateLimit({
-			windowMs: 5 * 60 * 1000,
-			max: 30,
-			keyGenerator: getIpAdress,
-		});
+		/**	Redirect /api to api server. */
+		this.server.use('/api', this.api);
 
+		/**	Allow cross site access of the api. */
+		this.api.use(cors());
+
+		/**	Use Rate limiter on api. */
 		this.api.use(limiter);
 
 		this.routeAPI();
@@ -51,5 +49,14 @@ export default class App {
 	private routeAPI() {
 		this.api.get('/login', login);
 		this.api.use(notFound);
+	}
+
+	private logInfo(req: Request, res: Response, next: NextFunction) {
+		const method = chalk.yellow(req.method.toUpperCase());
+		const location = chalk.green(req.url);
+		const ip = chalk.cyan(getIpAdress(req));
+
+		console.log(method, location, ip);
+		next();
 	}
 }
