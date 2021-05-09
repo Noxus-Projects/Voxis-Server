@@ -1,4 +1,4 @@
-import express, { Express } from 'express';
+import express, { Express, Request } from 'express';
 import rateLimit from 'express-rate-limit';
 import chalk from 'chalk';
 import cors from 'cors';
@@ -7,6 +7,12 @@ import { Base } from '@utils/functions';
 
 import notFound from './api/notFound';
 import login from './api/login';
+
+const getIpAdress = (req: Request) =>
+	(req.headers['cf-connecting-ip'] ? req.headers['cf-connecting-ip'][0] : null) ??
+	(req.headers['x-forwarded-for'] ? req.headers['x-forwarded-for'][0] : null) ??
+	req.socket.remoteAddress ??
+	'';
 
 export default class App {
 	private api: Express;
@@ -19,11 +25,7 @@ export default class App {
 		this.server.use((req, res, next) => {
 			const method = chalk.yellow(req.method.toUpperCase());
 			const location = chalk.green(req.url);
-			const ip = chalk.cyan(
-				req.headers['cf-connecting-ip'] ||
-					req.headers['x-forwarded-for'] ||
-					req.socket.remoteAddress
-			);
+			const ip = chalk.cyan(getIpAdress(req));
 
 			console.log(`${method} ${location} ${ip}`);
 			next();
@@ -38,6 +40,7 @@ export default class App {
 		const limiter = rateLimit({
 			windowMs: 5 * 60 * 1000,
 			max: 30,
+			keyGenerator: getIpAdress,
 		});
 
 		this.api.use(limiter);
