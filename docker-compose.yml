@@ -10,3 +10,4 @@ services:
       - REDIRECT=Discord redirect page
     volumes:
       - ./data:/app/data
+      - ./public:/app/public

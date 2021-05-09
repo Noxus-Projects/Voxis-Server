@@ -19,7 +19,11 @@ export default class App {
 		this.server.use((req, res, next) => {
 			const method = chalk.yellow(req.method.toUpperCase());
 			const location = chalk.green(req.url);
-			const ip = chalk.cyan(req.headers['x-forwarded-for'] ?? req.socket.remoteAddress);
+			const ip = chalk.cyan(
+				req.headers['cf-connecting-ip'] ||
+					req.headers['x-forwarded-for'] ||
+					req.socket.remoteAddress
+			);
 
 			console.log(`${method} ${location} ${ip}`);
 			next();
@@ -29,7 +33,7 @@ export default class App {
 
 		this.server.use('/api', this.api);
 
-		this.server.use(express.static(Base('src/public')));
+		this.server.use(express.static(Base('public')));
 
 		const limiter = rateLimit({
 			windowMs: 5 * 60 * 1000,
