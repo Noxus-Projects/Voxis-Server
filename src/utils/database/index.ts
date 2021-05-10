@@ -1,8 +1,9 @@
 import FileSync from 'lowdb/adapters/FileSync';
 import low from 'lowdb';
 
-import User from '@models/user';
+import { Base } from '@utils/functions';
 import Channel from '@models/channel';
+import User from '@models/user';
 
 import WhitelistManager from './whitelist';
 import ChannelManager from './channel';
@@ -28,7 +29,7 @@ export default class Database {
 	public whitelist: WhitelistManager;
 
 	constructor() {
-		const adapter = new FileSync<Schema>(process.cwd() + '/data/db.json');
+		const adapter = new FileSync<Schema>(Base('/data/db.json'));
 		this.db = low(adapter);
 
 		this.db.defaults({ channels: {}, users: {}, whitelist: [] }).write();

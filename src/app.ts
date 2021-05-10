@@ -5,6 +5,7 @@ import cors from 'cors';
 
 import { Base } from '@utils/functions';
 
+import rateLimitReached from './api/rateLimit';
 import notFound from './api/notFound';
 import login from './api/login';
 
@@ -17,6 +18,7 @@ const getIpAdress = (req: Request) =>
 const limiter = rateLimit({
 	windowMs: 5 * 60 * 1000,
 	max: 30,
+	handler: rateLimitReached,
 	keyGenerator: getIpAdress,
 });
 

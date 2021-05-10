@@ -14,7 +14,7 @@ export default function login(req: Request, res: Response): void {
 		.then((data) =>
 			res.status(200).json({
 				access_token: data.access_token,
-				expires_in: data.expires_in,
+				expires_in: data.expires_in * 1000,
 				refresh_token: data.refresh_token,
 			})
 		)
