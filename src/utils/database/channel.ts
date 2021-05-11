@@ -12,7 +12,7 @@ export default class ChannelManager {
 	/**
 	 * Edit an existing channel using its id.
 	 * @param id - The id of the channel.
-	 * @param updated - The new channel.
+	 * @param name - The channels new name.
 	 */
 	public edit(id: string, name: string): Channel {
 		const current = this.db.get('channels').get(id).value();
@@ -38,17 +38,18 @@ export default class ChannelManager {
 
 		if (exists) return;
 
+		const id = Date.now().toString();
+
 		const channel = {
-			messages: {},
-			id: Date.now().toString(),
 			created: new Date(),
 			creator: creator.id,
 			name,
 		};
 
-		this.db.get('channels').set(channel.id, channel).write();
+		this.db.get('messages').set(id, []).write();
+		this.db.get('channels').set(id, channel).write();
 
-		return channel;
+		return { ...channel, id };
 	}
 
 	/**
@@ -56,6 +57,7 @@ export default class ChannelManager {
 	 * @param id - The id of the channel to remove.
 	 */
 	public remove(id: string): void {
+		this.db.get('messages').unset(id).write();
 		this.db.get('channels').unset(id).write();
 	}
 
@@ -71,9 +73,6 @@ export default class ChannelManager {
 			return this.db.get('channels').values().value();
 		}
 
-		return this.db
-			.get('channels')
-			.find((channel) => channel.id === id)
-			.value();
+		return this.db.get('channels').get(id).value();
 	}
 }

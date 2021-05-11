@@ -14,12 +14,12 @@ export default class MessageManager {
 	 * @param options - The edit options.
 	 */
 	public edit(options: MessageEvents.Edit): Message {
-		const messages = this.db.get('channels').get(options.channel).get('messages');
-		const old = messages.get(options.id).value();
+		const messages = this.db.get('messages').get(options.channel);
+		const old = messages.find((message) => message.id === options.id).value();
 
 		const updated = { ...old, content: options.updated };
 
-		messages.set(options.id, updated).write();
+		messages.push(updated).write();
 
 		return updated;
 	}
@@ -31,7 +31,11 @@ export default class MessageManager {
 	 * @returns The requested message.
 	 */
 	public get(channel: string, id: string): Message {
-		return this.db.get('channels').get(channel).get('messages').get(id).value();
+		return this.db
+			.get('messages')
+			.get(channel)
+			.find((message) => message.id === id)
+			.value();
 	}
 
 	/**
@@ -40,7 +44,11 @@ export default class MessageManager {
 	 * @param id - The id of the message to remove.
 	 */
 	public remove(channel: string, id: string): void {
-		this.db.get('channels').get(channel).get('messages').unset(id).write();
+		this.db
+			.get('messages')
+			.get(channel)
+			.remove((message) => message.id === id)
+			.write();
 	}
 
 	/**
@@ -49,11 +57,6 @@ export default class MessageManager {
 	 * @param message - The message that needs to be pushed.
 	 */
 	public push(id: string, message: Message): void {
-		this.db
-			.get('channels')
-			.find((channel) => channel.id === id)
-			.get('messages')
-			.set(message.id, message)
-			.write();
+		this.db.get('messages').get(id).push(message).write();
 	}
 }

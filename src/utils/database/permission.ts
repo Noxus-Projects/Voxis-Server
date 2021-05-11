@@ -35,7 +35,7 @@ export default class PermissionManager {
 	public remove(id: string, permissions: Permission[]): void {
 		this.db
 			.get('users')
-			.find((user) => user.id === id)
+			.get(id)
 			.get('permissions')
 			.remove(...permissions)
 			.write();
@@ -49,7 +49,7 @@ export default class PermissionManager {
 	public add(id: string, permissions: Permission[]): void {
 		this.db
 			.get('users')
-			.find((user) => user.id === id)
+			.get(id)
 			.get('permissions')
 			.push(...permissions)
 			.write();

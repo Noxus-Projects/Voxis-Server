@@ -38,7 +38,7 @@ export default class MessagesManager {
 		const message = {
 			author: this.user.id,
 			created: new Date(),
-			content: data.id,
+			content: data.content,
 			id: Date.now().toString(),
 		};
 

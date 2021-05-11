@@ -6,6 +6,8 @@ export default interface User {
 	permissions: Permission[];
 }
 
+export type DbUser = Omit<User, 'id'>;
+
 export enum Permission {
 	MUTE_OTHERS = 1,
 	DISCONNECT_OTHERS = 2,

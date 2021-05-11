@@ -1,6 +1,6 @@
-import { ChannelEvents } from '@models/event';
 import { Permission } from '@models/user';
-import Channel from '@models/channel';
+
+import { Client } from './client';
 
 import { ClientOptions } from '.';
 
@@ -22,7 +22,7 @@ export default class ChannelManager {
 		this.client.on('editChannel', (data, callback?) => this.edit(data, callback));
 	}
 
-	private remove(id: string, reply: (message: string) => void) {
+	private remove: Client.Channels.remove = (id, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
@@ -37,10 +37,10 @@ export default class ChannelManager {
 
 		this.database.channels.remove(id);
 
-		this.server.emit('removedChannel');
-	}
+		this.server.emit('removedChannel', id);
+	};
 
-	private edit(options: ChannelEvents.Edit, reply: (message: string) => void) {
+	private edit: Client.Channels.edit = (options, reply) => {
 		if (!reply) return;
 
 		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
@@ -56,9 +56,9 @@ export default class ChannelManager {
 		const updated = this.database.channels.edit(options.id, options.name);
 
 		this.server.emit('updatedChannel', updated);
-	}
+	};
 
-	private get(id: string | null, reply: (channel: Channel | Channel[] | string) => void) {
+	private get: Client.Channels.get = (id, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
@@ -67,7 +67,7 @@ export default class ChannelManager {
 		}
 
 		reply(id ? this.database.channels.get(id) : this.database.channels.get());
-	}
+	};
 
 	private create(name: string, reply: (message: string) => void) {
 		if (!reply) return;

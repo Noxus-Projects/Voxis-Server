@@ -1,9 +1,9 @@
 import FileSync from 'lowdb/adapters/FileSync';
 import low from 'lowdb';
 
+import Channel, { Message } from '@models/channel';
 import { Base } from '@utils/functions';
-import Channel from '@models/channel';
-import User from '@models/user';
+import { DbUser } from '@models/user';
 
 import WhitelistManager from './whitelist';
 import ChannelManager from './channel';
@@ -13,8 +13,9 @@ import PermissionManager from './permission';
 
 interface Schema {
 	channels: Record<string, Channel>;
-	users: Record<string, User>;
+	users: Record<string, DbUser>;
 	whitelist: Array<string>;
+	messages: Record<string, Array<Message>>;
 }
 
 export type DB = low.LowdbSync<Schema>;
@@ -32,7 +33,7 @@ export default class Database {
 		const adapter = new FileSync<Schema>(Base('/data/db.json'));
 		this.db = low(adapter);
 
-		this.db.defaults({ channels: {}, users: {}, whitelist: [] }).write();
+		this.db.defaults({ channels: {}, users: {}, whitelist: [], messages: {} }).write();
 
 		this.channels = new ChannelManager(this.db);
 		this.permissions = new PermissionManager(this.db);

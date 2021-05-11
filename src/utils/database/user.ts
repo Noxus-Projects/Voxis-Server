@@ -31,7 +31,7 @@ export default class UserManager {
 	 * @param id - The users id.
 	 */
 	public get(id: string): User | undefined {
-		return this.db.get('users').get(id).value();
+		return { ...this.db.get('users').get(id).value(), id };
 	}
 
 	/**
@@ -39,7 +39,8 @@ export default class UserManager {
 	 * @param user - The user to add.
 	 */
 	public create(user: User): void {
-		this.db.get('users').set(user.id, user).write();
+		const { id, ...rest } = user;
+		this.db.get('users').set(id, rest).write();
 	}
 
 	/**

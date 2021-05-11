@@ -7,7 +7,7 @@ export namespace MessageEvents {
 		/**
 		 * The message that needs to be sent.
 		 */
-		id: string;
+		content: string;
 	}
 
 	export interface Remove {
@@ -16,7 +16,7 @@ export namespace MessageEvents {
 		 */
 		channel: string;
 		/**
-		 * The message that needs to be sent.
+		 * The id of the message that needs to be removed.
 		 */
 		id: string;
 	}
