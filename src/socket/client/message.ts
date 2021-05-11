@@ -1,5 +1,6 @@
-import { MessageEvents } from '@models/event';
 import { Permission } from '@models/user';
+
+import { Client } from '@models/client';
 
 import { ClientOptions } from '.';
 
@@ -15,12 +16,12 @@ export default class MessagesManager {
 		this.user = options.user;
 		this.database = options.database;
 
-		this.client.on('sendMessage', (data, callback) => this.sendMessage(data, callback));
-		this.client.on('editMessage', (data, callback) => this.editMessage(data, callback));
-		this.client.on('removeMessage', (data, callback) => this.removeMessage(data, callback));
+		this.client.on('sendMessage', (data, callback) => this.send(data, callback));
+		this.client.on('editMessage', (data, callback) => this.edit(data, callback));
+		this.client.on('removeMessage', (data, callback) => this.remove(data, callback));
 	}
 
-	private sendMessage(data: MessageEvents.Message, reply: (message: string) => void) {
+	private send: Client.Message.send = (data, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
@@ -44,13 +45,10 @@ export default class MessagesManager {
 
 		this.database.messages.push(data.channel, message);
 
-		this.server.emit('message', {
-			...message,
-			channel: data.channel,
-		});
-	}
+		this.server.emit('message', { ...message, channel: data.channel });
+	};
 
-	public removeMessage(data: MessageEvents.Remove, reply: (message: string) => void): void {
+	private remove: Client.Message.remove = (data, reply) => {
 		if (!reply) return;
 
 		const message = this.database.messages.get(data.channel, data.id);
@@ -70,9 +68,9 @@ export default class MessagesManager {
 		this.database.messages.remove(data.channel, data.id);
 
 		this.server.emit('removedMessage', { ...message, channel: data.channel });
-	}
+	};
 
-	private editMessage(data: MessageEvents.Edit, reply: (message: string) => void) {
+	private edit: Client.Message.edit = (data, reply) => {
 		if (!reply) return;
 
 		const message = this.database.messages.get(data.channel, data.id);
@@ -90,5 +88,5 @@ export default class MessagesManager {
 		const updated = this.database.messages.edit(data);
 
 		this.server.emit('editedMessage', { ...updated, channel: data.channel });
-	}
+	};
 }

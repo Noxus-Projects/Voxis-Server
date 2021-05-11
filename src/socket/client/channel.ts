@@ -1,6 +1,6 @@
 import { Permission } from '@models/user';
 
-import { Client } from './client';
+import { Client } from '@models/client';
 
 import { ClientOptions } from '.';
 
@@ -22,7 +22,7 @@ export default class ChannelManager {
 		this.client.on('editChannel', (data, callback?) => this.edit(data, callback));
 	}
 
-	private remove: Client.Channels.remove = (id, reply) => {
+	private remove: Client.Channel.remove = (id, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
@@ -40,7 +40,7 @@ export default class ChannelManager {
 		this.server.emit('removedChannel', id);
 	};
 
-	private edit: Client.Channels.edit = (options, reply) => {
+	private edit: Client.Channel.edit = (options, reply) => {
 		if (!reply) return;
 
 		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
@@ -58,7 +58,7 @@ export default class ChannelManager {
 		this.server.emit('updatedChannel', updated);
 	};
 
-	private get: Client.Channels.get = (id, reply) => {
+	private get: Client.Channel.get = (id, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {

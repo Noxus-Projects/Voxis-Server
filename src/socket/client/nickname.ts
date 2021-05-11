@@ -1,5 +1,7 @@
-import { NicknameEvents } from '@models/event';
 import { Permission } from '@models/user';
+
+import { Client } from '@models/client';
+
 import { ClientOptions } from '.';
 
 export default class NicknameManager {
@@ -17,12 +19,7 @@ export default class NicknameManager {
 		this.client.on('editNickname', (data, callback) => this.edit(data, callback));
 	}
 
-	/**
-	 * Edit a users nickname.
-	 * @param data - An object containing the new nickname and optionally the user id.
-	 * @param reply - The reply to the call.
-	 */
-	public edit(data: NicknameEvents.Edit, reply: (message: string) => void): void {
+	public edit: Client.Nickname.edit = (data, reply) => {
 		if (!reply) return;
 
 		const user: string = data.user ?? this.user.id;
@@ -37,5 +34,5 @@ export default class NicknameManager {
 		this.database.users.editNickname(user, data.updated);
 
 		this.server.emit('editedNickname', { user, updated: data.updated });
-	}
+	};
 }

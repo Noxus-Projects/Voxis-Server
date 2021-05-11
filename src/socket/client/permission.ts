@@ -1,5 +1,6 @@
-import { PermissionEvents } from '@models/event';
 import { Permission } from '@models/user';
+
+import { Client } from '@models/client';
 
 import { ClientOptions } from '.';
 
@@ -20,23 +21,13 @@ export default class PermissionsManager {
 		this.client.on('removePermissions', (data, callback) => this.remove(data, callback));
 	}
 
-	/**
-	 * Get the current permissions for a user.
-	 * @param id - The users id.
-	 * @param reply - The reply to the request.
-	 */
-	private get(id: string, reply: (permissions: Permission[]) => void): void {
+	private get: Client.Permission.get = (id, reply) => {
 		if (!reply) return;
 
 		reply(this.database.permissions.get(id));
-	}
+	};
 
-	/**
-	 * Add permissions to a given user.
-	 * @param data - An object containing the new permission(s) and the users id.
-	 * @param reply - The reply to the request.
-	 */
-	private add(data: PermissionEvents.Add, reply: (message: string) => void): void {
+	private add: Client.Permission.add = (data, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
@@ -49,14 +40,9 @@ export default class PermissionsManager {
 		this.database.permissions.add(user, data.updated);
 
 		this.server.emit('addedPermission', { user, updated: data.updated });
-	}
+	};
 
-	/**
-	 * Remove permissions from a given user.
-	 * @param data - An object containing the removed permission(s) and the users id.
-	 * @param reply - The reply to the request.
-	 */
-	private remove(data: PermissionEvents.Remove, reply: (message: string) => void): void {
+	private remove: Client.Permission.remove = (data, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
@@ -69,5 +55,5 @@ export default class PermissionsManager {
 		this.database.permissions.remove(user, data.removed);
 
 		this.server.emit('removedPermission', { user, removed: data.removed });
-	}
+	};
 }

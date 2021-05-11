@@ -1,5 +1,6 @@
-import { RoomEvents } from '@models/event';
 import { Permission } from '@models/user';
+
+import { Client } from '@models/client';
 
 import { ClientOptions } from '.';
 
@@ -15,16 +16,16 @@ export default class RoomManager {
 		this.user = options.user;
 		this.database = options.database;
 
-		this.client.on('joinRoom', (data) => this.joinRoom(data));
-		this.client.on('leaveRoom', (data, callback?) => this.leaveRoom(data, callback));
+		this.client.on('joinRoom', (data, callback?) => this.join(data, callback));
+		this.client.on('leaveRoom', (data, callback?) => this.leave(data, callback));
 	}
 
-	private joinRoom(room: string): void {
-		this.client.join(room);
-		this.server.emit('joinedRoom', { room, user: this.user.id });
-	}
+	private join: Client.Room.change = (data, reply) => {
+		this.client.join(data.room);
+		this.server.emit('joinedRoom', { room: data.room, user: this.user.id });
+	};
 
-	private leaveRoom(data: RoomEvents.Change, reply: (message: string) => void): void {
+	private leave: Client.Room.change = (data, reply) => {
 		if (!reply) return;
 
 		const user: string = data.user ?? this.user.id;
@@ -39,5 +40,5 @@ export default class RoomManager {
 
 		this.client.leave(data.room);
 		this.server.emit('leftRoom', { room: data.room, user });
-	}
+	};
 }
