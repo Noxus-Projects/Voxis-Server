@@ -61,17 +61,28 @@ export default class ChannelManager {
 		this.db.get('channels').unset(id).write();
 	}
 
-	get(id: string): Channel;
+	get(): Channel[];
+	get(id: string): Channel | void;
 	/**
 	 * Get a channel by its id.
 	 * @param id - The channel's id.
 	 * @returns - The channel's information.
 	 */
-	public get(id: string): Channel | Channel[] {
-		// if (!id) {
-		// 	return this.db.get('channels').values().map();
-		// }
+	public get(id?: string): Channel | Channel[] | void {
+		if (!id) {
+			return this.db
+				.get('channels')
+				.entries()
+				.value()
+				.map((entry) => ({ ...entry[1], id: entry[0] }));
+		}
 
-		return { ...this.db.get('channels').get(id).value(), id };
+		const channel = this.db.get('channels').get(id).value();
+
+		if (channel) {
+			return { ...channel, id };
+		}
+
+		return;
 	}
 }

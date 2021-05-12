@@ -18,10 +18,11 @@ export default class WebSocket {
 
 	constructor(server: http.Server) {
 		this.io = new Server(server, {
-			// cors: {
-			// 	origin: '*',
-			// 	methods: ['GET', 'POST'],
-			// },
+			path: '/socket',
+			cors: {
+				origin: ['http://localhost:8888'],
+				methods: ['GET', 'POST'],
+			},
 		});
 
 		this.db = new Database();
@@ -50,8 +51,6 @@ export default class WebSocket {
 
 	private authorize(socket: Socket, next: Next): void {
 		const token = socket.handshake.auth.token;
-
-		connectionLog(chalk.yellow('•'), 'Unknown user', socket.id);
 
 		Discord.user(token).then(([data, exists]) => {
 			if (!exists || !data) {

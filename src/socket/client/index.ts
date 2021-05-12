@@ -38,6 +38,10 @@ export default class Client {
 
 		database.users.create(this.user);
 
+		client.broadcast.emit('userConnected', this.user.id);
+
+		client.on('disconnect', () => server.emit('userDisconnected', this.user.id));
+
 		const options: ClientOptions = {
 			database,
 			client,

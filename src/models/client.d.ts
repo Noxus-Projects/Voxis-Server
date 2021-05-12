@@ -1,4 +1,5 @@
 import { Permission } from '@models/user';
+import { Message } from '@models/channel';
 
 export namespace Client {
 	export type Reply = (message: string) => void;
@@ -30,10 +31,33 @@ export namespace Client {
 		 * @param id - The id of the channel.
 		 * @param reply - Replies with the channel, an array of channels or an error.
 		 */
-		export type get = (id: string, reply?: (channel: Channel | Channel[] | string) => void) => void;
+		export type get = (
+			id: string | null,
+			reply?: (channel: Channel | Channel[] | string) => void
+		) => void;
 	}
 
 	export namespace Message {
+		interface Get {
+			/**
+			 * The channels id.
+			 */
+			channel: string;
+			/**
+			 * The starting point of the slice of messages to request
+			 */
+			from: number;
+			/**
+			 * The ending point of the slice of messages to request.
+			 */
+			to: number;
+		}
+
+		export type get = (
+			options: Get,
+			reply?: (message: Message | Message[] | string) => void
+		) => void;
+
 		interface Send {
 			/**
 			 * The channels id.

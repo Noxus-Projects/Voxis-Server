@@ -76,12 +76,17 @@ export default class ChannelManager {
 			return;
 		}
 
-		if (typeof id !== 'string') {
-			reply('That is not a valid channel id');
+		if (typeof id == 'string') {
+			reply(this.database.channels.get(id));
 			return;
 		}
 
-		reply(this.database.channels.get(id));
+		if (!id) {
+			reply(this.database.channels.get());
+			return;
+		}
+
+		reply('That is not a valid channel id');
 	};
 
 	private create(name: string, reply: (message: string) => void) {

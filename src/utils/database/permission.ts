@@ -47,11 +47,14 @@ export default class PermissionManager {
 	 * @param permission The permission to add.
 	 */
 	public add(id: string, permissions: Permission[]): void {
-		this.db
+		const unique = this.db
 			.get('users')
 			.get(id)
 			.get('permissions')
 			.push(...permissions)
-			.write();
+			.uniq()
+			.value();
+
+		this.db.get('users').get(id).set('permissions', unique).write();
 	}
 }

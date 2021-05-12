@@ -19,7 +19,25 @@ export default class MessagesManager {
 		this.client.on('sendMessage', (data, callback) => this.send(data, callback));
 		this.client.on('editMessage', (data, callback) => this.edit(data, callback));
 		this.client.on('removeMessage', (data, callback) => this.remove(data, callback));
+		this.client.on('getMessage', (data, callback) => this.get(data, callback));
 	}
+
+	private get: Client.Message.get = (data, reply) => {
+		if (!reply) return;
+
+		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
+			reply('You are not allowed to see any channels.');
+			return;
+		}
+
+		if (!data || !data.channel || !data.from || !data.to) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
+
+		const messages = this.database.messages.get(data.channel, { from: data.from, to: data.to });
+		reply(messages);
+	};
 
 	private send: Client.Message.send = (data, reply) => {
 		if (!reply) return;

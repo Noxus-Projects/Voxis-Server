@@ -1,7 +1,7 @@
 import FileSync from 'lowdb/adapters/FileSync';
 import low from 'lowdb';
 
-import { DbChannel, Message } from '@models/channel';
+import { DbChannel, DbMessage } from '@models/channel';
 import { Base } from '@utils/functions';
 import { DbUser } from '@models/user';
 import Action from '@models/action';
@@ -16,7 +16,7 @@ interface Schema {
 	channels: Record<string, DbChannel>;
 	users: Record<string, DbUser>;
 	whitelist: Array<string>;
-	messages: Record<string, Array<Message>>;
+	messages: Record<string, Array<DbMessage>>;
 	audit: Array<Action>;
 }
 

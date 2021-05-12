@@ -45,11 +45,19 @@ export default class PermissionsManager {
 			return;
 		}
 
+		const filtered = data.updated.filter(
+			(permission) => permission > 0 && permission <= Math.floor(Object.keys(Permission).length / 2)
+		);
+
+		if (filtered.length == 0) {
+			return;
+		}
+
 		const user: string = data.user ?? this.user.id;
 
-		this.database.permissions.add(user, data.updated);
+		this.database.permissions.add(user, filtered);
 
-		this.server.emit('addedPermission', { user, updated: data.updated });
+		this.server.emit('addedPermission', { user, updated: filtered });
 	};
 
 	private remove: Client.Permission.remove = (data, reply) => {

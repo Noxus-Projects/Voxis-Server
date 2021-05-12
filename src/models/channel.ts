@@ -13,3 +13,5 @@ export interface Message {
 	id: string;
 	created: number;
 }
+
+export type DbMessage = Omit<Message, 'id'>;
