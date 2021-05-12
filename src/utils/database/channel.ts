@@ -21,7 +21,7 @@ export default class ChannelManager {
 
 		this.db.get('channels').set(id, updated).write();
 
-		return updated;
+		return { ...updated, id };
 	}
 
 	/**
@@ -41,7 +41,7 @@ export default class ChannelManager {
 		const id = Date.now().toString();
 
 		const channel = {
-			created: new Date(),
+			created: Date.now(),
 			creator: creator.id,
 			name,
 		};
@@ -61,18 +61,17 @@ export default class ChannelManager {
 		this.db.get('channels').unset(id).write();
 	}
 
-	get(): Channel[];
 	get(id: string): Channel;
 	/**
 	 * Get a channel by its id.
 	 * @param id - The channel's id.
 	 * @returns - The channel's information.
 	 */
-	public get(id?: string): Channel | Channel[] {
-		if (!id) {
-			return this.db.get('channels').values().value();
-		}
+	public get(id: string): Channel | Channel[] {
+		// if (!id) {
+		// 	return this.db.get('channels').values().map();
+		// }
 
-		return this.db.get('channels').get(id).value();
+		return { ...this.db.get('channels').get(id).value(), id };
 	}
 }

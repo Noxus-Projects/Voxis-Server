@@ -24,6 +24,11 @@ export default class MessagesManager {
 	private send: Client.Message.send = (data, reply) => {
 		if (!reply) return;
 
+		if (!data || !data.channel || !data.content) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
+
 		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
 			reply('You are not permitted to send messages.');
 			return;
@@ -38,7 +43,7 @@ export default class MessagesManager {
 
 		const message = {
 			author: this.user.id,
-			created: new Date(),
+			created: Date.now(),
 			content: data.content,
 			id: Date.now().toString(),
 		};
@@ -50,6 +55,11 @@ export default class MessagesManager {
 
 	private remove: Client.Message.remove = (data, reply) => {
 		if (!reply) return;
+
+		if (!data || !data.channel || !data.id) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
 
 		const message = this.database.messages.get(data.channel, data.id);
 
@@ -72,6 +82,11 @@ export default class MessagesManager {
 
 	private edit: Client.Message.edit = (data, reply) => {
 		if (!reply) return;
+
+		if (!data || !data.channel || !data.id || !data.updated) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
 
 		const message = this.database.messages.get(data.channel, data.id);
 

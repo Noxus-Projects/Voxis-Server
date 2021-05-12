@@ -25,9 +25,12 @@ export default class Client {
 
 		const current = database.users.get(data.id);
 
+		client.data.id = data.id;
+
 		this.user = {
 			id: data.id,
 			name: data.username,
+			lastConnected: Date.now(),
 			avatar: data.avatar,
 			nickname: current?.nickname ?? '',
 			permissions: current?.permissions ?? [],

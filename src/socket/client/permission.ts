@@ -24,11 +24,21 @@ export default class PermissionsManager {
 	private get: Client.Permission.get = (id, reply) => {
 		if (!reply) return;
 
+		if (typeof id !== 'string') {
+			reply('That is not a valid channel id');
+			return;
+		}
+
 		reply(this.database.permissions.get(id));
 	};
 
 	private add: Client.Permission.add = (data, reply) => {
 		if (!reply) return;
+
+		if (!data || !data.updated) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
 			reply('You do not have the permission to add a permission to this user.');
@@ -45,8 +55,13 @@ export default class PermissionsManager {
 	private remove: Client.Permission.remove = (data, reply) => {
 		if (!reply) return;
 
+		if (!data || !data.removed) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
+
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
-			reply('You do not have the permission to remove a permission to this user.');
+			reply('You do not have the permission to remove a permission from this user.');
 			return;
 		}
 

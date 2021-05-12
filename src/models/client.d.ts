@@ -1,3 +1,5 @@
+import { Permission } from '@models/user';
+
 export namespace Client {
 	export type Reply = (message: string) => void;
 
@@ -21,17 +23,14 @@ export namespace Client {
 		 * @param reply - Replies if an error occurs.
 		 * @emits 'updatedChannel' - The updated channel.
 		 */
-		export type edit = (edit: ChannelEvents.Edit, reply?: Reply) => void;
+		export type edit = (edit: Edit, reply?: Reply) => void;
 
 		/**
 		 * Returns a requested channel (Or every channel if none are specified).
 		 * @param id - The id of the channel.
 		 * @param reply - Replies with the channel, an array of channels or an error.
 		 */
-		export type get = (
-			id: string | null,
-			reply?: (channel: Channel | Channel[] | string) => void
-		) => void;
+		export type get = (id: string, reply?: (channel: Channel | Channel[] | string) => void) => void;
 	}
 
 	export namespace Message {
@@ -124,7 +123,7 @@ export namespace Client {
 		 * @param id - The users id.
 		 * @param reply - Replies with a list of permissions.
 		 */
-		export type get = (id: string, reply: (permissions: Permission[]) => void) => void;
+		export type get = (id: string, reply: (permissions: Permission[] | string) => void) => void;
 
 		interface Add {
 			/**
@@ -167,7 +166,7 @@ export namespace Client {
 			/**
 			 *
 			 */
-			user: string;
+			user?: string;
 		}
 
 		export type change = (data: Change, reply: (message: string) => void) => void;

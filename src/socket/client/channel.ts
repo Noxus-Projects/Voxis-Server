@@ -25,6 +25,11 @@ export default class ChannelManager {
 	private remove: Client.Channel.remove = (id, reply) => {
 		if (!reply) return;
 
+		if (typeof id !== 'string') {
+			reply('That is not a valid channel id');
+			return;
+		}
+
 		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
 			reply('You are not permitted to remove that channel.');
 			return;
@@ -42,6 +47,11 @@ export default class ChannelManager {
 
 	private edit: Client.Channel.edit = (options, reply) => {
 		if (!reply) return;
+
+		if (!options || !options.id || !options.name) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
 
 		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
 			reply('You are not permitted to edit that channel.');
@@ -66,7 +76,12 @@ export default class ChannelManager {
 			return;
 		}
 
-		reply(id ? this.database.channels.get(id) : this.database.channels.get());
+		if (typeof id !== 'string') {
+			reply('That is not a valid channel id');
+			return;
+		}
+
+		reply(this.database.channels.get(id));
 	};
 
 	private create(name: string, reply: (message: string) => void) {
@@ -74,6 +89,11 @@ export default class ChannelManager {
 
 		if (!this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
 			reply('You are not permitted to create a channel.');
+			return;
+		}
+
+		if (typeof name !== 'string') {
+			reply('That is not a valid channel name');
 			return;
 		}
 

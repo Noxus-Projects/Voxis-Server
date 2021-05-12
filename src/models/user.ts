@@ -3,6 +3,7 @@ export default interface User {
 	avatar: string;
 	id: string;
 	nickname: string;
+	lastConnected: number;
 	permissions: Permission[];
 }
 

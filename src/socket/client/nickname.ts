@@ -22,6 +22,11 @@ export default class NicknameManager {
 	public edit: Client.Nickname.edit = (data, reply) => {
 		if (!reply) return;
 
+		if (!data || !data.updated) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
+
 		const user: string = data.user ?? this.user.id;
 
 		if (!this.database.permissions.has(this.user.id, Permission.EDIT_NICKNAME)) {
