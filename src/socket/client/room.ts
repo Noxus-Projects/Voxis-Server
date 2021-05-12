@@ -21,6 +21,11 @@ export default class RoomManager {
 	}
 
 	private join: Client.Room.change = (data, reply) => {
+		if (!this.database.permissions.has(this.user.id, Permission.JOIN_ROOM)) {
+			reply('You are not permitted to join this room.');
+			return;
+		}
+
 		this.client.join(data.room);
 		this.server.emit('joinedRoom', { room: data.room, user: this.user.id });
 	};

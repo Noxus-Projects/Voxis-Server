@@ -24,4 +24,5 @@ export enum Permission {
 	REMOVE_MESSAGE = 13,
 	MANAGE_PERMISSIONS = 14,
 	EDIT_NICKNAME = 15,
+	SPEAK = 16,
 }
