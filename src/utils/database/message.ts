@@ -1,6 +1,6 @@
 import { DbMessage, Message } from '@models/channel';
 
-import { Client } from '@models/client';
+import { MessageEvents } from '@models/events';
 
 import { DB } from '.';
 
@@ -16,7 +16,7 @@ export default class MessageManager {
 	 * Edit a given message in a given channel.
 	 * @param options - The edit options.
 	 */
-	public edit(options: Client.Message.Edit): Message {
+	public edit(options: MessageEvents.Edit): Message {
 		const messages = this.db.get('messages').get(options.channel);
 		const old = messages.find((msg) => findMessage(msg, options.id)).value();
 

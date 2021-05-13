@@ -3,6 +3,9 @@ import { Socket, Server } from 'socket.io';
 import User from '@models/user';
 import Database from '@utils/database';
 
+import { EventsMap } from '@models/events';
+import { EmitMap } from '@models/emit';
+
 import ChannelManager from './channel';
 import RoomManager from './room';
 import VoiceManager from './voice';
@@ -11,8 +14,8 @@ import MessagesManager from './message';
 import NicknameManager from './nickname';
 
 export interface ClientOptions {
-	client: Socket;
-	server: Server;
+	client: Socket<EventsMap, EmitMap>;
+	server: Server<EventsMap, EmitMap>;
 	user: User;
 	database: Database;
 }
@@ -39,7 +42,6 @@ export default class Client {
 		database.users.create(this.user);
 
 		client.broadcast.emit('userConnected', this.user.id);
-
 		client.on('disconnect', () => server.emit('userDisconnected', this.user.id));
 
 		const options: ClientOptions = {

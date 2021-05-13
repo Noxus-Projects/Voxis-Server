@@ -1,6 +1,6 @@
 import { Permission } from '@models/user';
 
-import { Client } from '@models/client';
+import { ChannelEvents } from '@models/events';
 
 import { ClientOptions } from '.';
 
@@ -16,13 +16,13 @@ export default class ChannelManager {
 		this.database = options.database;
 		this.user = options.user;
 
-		this.client.on('getChannel', (data, callback?) => this.get(data, callback));
-		this.client.on('createChannel', (data, callback?) => this.create(data, callback));
-		this.client.on('removeChannel', (data, callback?) => this.remove(data, callback));
-		this.client.on('editChannel', (data, callback?) => this.edit(data, callback));
+		this.client.on('getChannel', (data, callback) => this.get(data, callback));
+		this.client.on('createChannel', (data, callback) => this.create(data, callback));
+		this.client.on('removeChannel', (data, callback) => this.remove(data, callback));
+		this.client.on('editChannel', (data, callback) => this.edit(data, callback));
 	}
 
-	private remove: Client.Channel.remove = (id, reply) => {
+	private remove: ChannelEvents.remove = (id, reply) => {
 		if (!reply) return;
 
 		if (typeof id !== 'string') {
@@ -45,7 +45,7 @@ export default class ChannelManager {
 		this.server.emit('removedChannel', id);
 	};
 
-	private edit: Client.Channel.edit = (options, reply) => {
+	private edit: ChannelEvents.edit = (options, reply) => {
 		if (!reply) return;
 
 		if (!options || !options.id || !options.name) {
@@ -68,7 +68,7 @@ export default class ChannelManager {
 		this.server.emit('updatedChannel', updated);
 	};
 
-	private get: Client.Channel.get = (id, reply) => {
+	private get: ChannelEvents.get = (id, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
@@ -89,7 +89,7 @@ export default class ChannelManager {
 		reply('That is not a valid channel id');
 	};
 
-	private create(name: string, reply: (message: string) => void) {
+	private create: ChannelEvents.create = (name, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
@@ -110,5 +110,5 @@ export default class ChannelManager {
 		}
 
 		this.server.emit('createdChannel', channel);
-	}
+	};
 }

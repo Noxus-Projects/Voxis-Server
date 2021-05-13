@@ -1,6 +1,5 @@
 import { Permission } from '@models/user';
-
-import { Client } from '@models/client';
+import { RoomEvents } from '@models/events';
 
 import { ClientOptions } from '.';
 
@@ -16,11 +15,11 @@ export default class RoomManager {
 		this.user = options.user;
 		this.database = options.database;
 
-		this.client.on('joinRoom', (data, callback?) => this.join(data, callback));
-		this.client.on('leaveRoom', (data, callback?) => this.leave(data, callback));
+		this.client.on('joinRoom', (data, callback) => this.join(data, callback));
+		this.client.on('leaveRoom', (data, callback) => this.leave(data, callback));
 	}
 
-	private join: Client.Room.change = (data, reply) => {
+	private join: RoomEvents.change = (data, reply) => {
 		if (!data || !data.room) {
 			reply('You have not supplied the correct information.');
 			return;
@@ -35,7 +34,7 @@ export default class RoomManager {
 		this.server.emit('joinedRoom', { room: data.room, user: this.user.id });
 	};
 
-	private leave: Client.Room.change = (data, reply) => {
+	private leave: RoomEvents.change = (data, reply) => {
 		if (!reply) return;
 
 		if (!data || !data.room) {

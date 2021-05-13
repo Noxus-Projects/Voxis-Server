@@ -1,6 +1,5 @@
 import { Permission } from '@models/user';
-
-import { Client } from '@models/client';
+import { MessageEvents } from '@models/events';
 
 import { ClientOptions } from '.';
 
@@ -22,24 +21,25 @@ export default class MessagesManager {
 		this.client.on('getMessage', (data, callback) => this.get(data, callback));
 	}
 
-	private get: Client.Message.get = (data, reply) => {
+	private get: MessageEvents.get = (data, reply) => {
 		if (!reply) return;
-
-		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
-			reply('You are not allowed to see any channels.');
-			return;
-		}
 
 		if (!data || !data.channel || !data.from || !data.to) {
 			reply('You have not supplied the correct information.');
 			return;
 		}
 
+		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
+			reply('You are not allowed to see any messages.');
+			return;
+		}
+
 		const messages = this.database.messages.get(data.channel, { from: data.from, to: data.to });
+
 		reply(messages);
 	};
 
-	private send: Client.Message.send = (data, reply) => {
+	private send: MessageEvents.send = (data, reply) => {
 		if (!reply) return;
 
 		if (!data || !data.channel || !data.content) {
@@ -68,10 +68,10 @@ export default class MessagesManager {
 
 		this.database.messages.push(data.channel, message);
 
-		this.server.emit('message', { ...message, channel: data.channel });
+		this.server.emit('sentMessage', { message, channel: data.channel });
 	};
 
-	private remove: Client.Message.remove = (data, reply) => {
+	private remove: MessageEvents.remove = (data, reply) => {
 		if (!reply) return;
 
 		if (!data || !data.channel || !data.id) {
@@ -95,10 +95,10 @@ export default class MessagesManager {
 
 		this.database.messages.remove(data.channel, data.id);
 
-		this.server.emit('removedMessage', { ...message, channel: data.channel });
+		this.server.emit('removedMessage', { message, channel: data.channel });
 	};
 
-	private edit: Client.Message.edit = (data, reply) => {
+	private edit: MessageEvents.edit = (data, reply) => {
 		if (!reply) return;
 
 		if (!data || !data.channel || !data.id || !data.updated) {
@@ -120,6 +120,6 @@ export default class MessagesManager {
 
 		const updated = this.database.messages.edit(data);
 
-		this.server.emit('editedMessage', { ...updated, channel: data.channel });
+		this.server.emit('editedMessage', { message: updated, channel: data.channel });
 	};
 }

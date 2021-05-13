@@ -1,6 +1,5 @@
 import { Permission } from '@models/user';
-
-import { Client } from '@models/client';
+import { NicknameEvents } from '@models/events';
 
 import { ClientOptions } from '.';
 
@@ -19,7 +18,7 @@ export default class NicknameManager {
 		this.client.on('editNickname', (data, callback) => this.edit(data, callback));
 	}
 
-	public edit: Client.Nickname.edit = (data, reply) => {
+	public edit: NicknameEvents.edit = (data, reply) => {
 		if (!reply) return;
 
 		if (!data || !data.updated) {
