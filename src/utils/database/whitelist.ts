@@ -1,4 +1,4 @@
-import { DB } from '.';
+import { DB } from '@models/database';
 
 export default class WhitelistManager {
 	private db: DB;
@@ -33,6 +33,9 @@ export default class WhitelistManager {
 	 * @param id - The users id.
 	 */
 	public remove(id: string): void {
-		this.db.get('whitelist').remove(id).write();
+		this.db
+			.get('whitelist')
+			.remove((user) => user === id)
+			.write();
 	}
 }

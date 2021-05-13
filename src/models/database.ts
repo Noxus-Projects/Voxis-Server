@@ -1,0 +1,23 @@
+import low from 'lowdb';
+
+import { DbChannel, DbMessage } from '@models/channel';
+import { DbUser } from '@models/user';
+import Action from '@models/action';
+
+export interface DatabaseSchema {
+	channels: Record<string, DbChannel>;
+	users: Record<string, DbUser>;
+	whitelist: Array<string>;
+	messages: Record<string, Array<DbMessage>>;
+	audit: Array<Action>;
+}
+
+export interface CachedData {
+	id: string;
+	created: number;
+}
+
+export type CacheSchema = Record<string, CachedData>;
+
+export type DB = low.LowdbSync<DatabaseSchema>;
+export type Cache = low.LowdbSync<CacheSchema>;

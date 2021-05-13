@@ -20,6 +20,14 @@ export interface EmitMap {
 	removedChannel: ChannelEmit.remove;
 	updatedChannel: ChannelEmit.update;
 	createdChannel: ChannelEmit.update;
+
+	addedWhitelist: WhitelistEmit.add;
+	removedWhitelist: WhitelistEmit.remove;
+}
+
+export namespace WhitelistEmit {
+	export type add = (id: string) => void;
+	export type remove = (id: string) => void;
 }
 
 export namespace VoiceEmit {

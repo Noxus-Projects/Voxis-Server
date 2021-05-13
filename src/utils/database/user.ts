@@ -1,6 +1,6 @@
 import User from '@models/user';
 
-import { DB } from '.';
+import { DB } from '@models/database';
 
 export default class UserManager {
 	private db: DB;

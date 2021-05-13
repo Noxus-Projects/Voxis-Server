@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import { Permission } from '@models/user';
+import User, { Permission } from '@models/user';
 import { Message } from '@models/channel';
 import Channel from '@models/channel';
 
@@ -21,7 +21,12 @@ export interface EventsMap {
 	joinRoom: RoomEvents.change;
 	leaveRoom: RoomEvents.change;
 
+	getUser: UserEvents.get;
+
 	voiceData: (data: string) => void;
+
+	addWhitelist: WhitelistEvents.add;
+	removeWhitelist: WhitelistEvents.remove;
 
 	editNickname: NicknameEvents.edit;
 }
@@ -30,6 +35,15 @@ export type Reply = (message: string) => void;
 
 export namespace VoiceEvents {
 	export type send = (data: string) => void;
+}
+
+export namespace WhitelistEvents {
+	export type add = (id: string, reply: Reply) => void;
+	export type remove = (id: string, reply: Reply) => void;
+}
+
+export namespace UserEvents {
+	export type get = (id: string | null, reply: (msg: string | User) => void) => void;
 }
 
 export namespace ChannelEvents {

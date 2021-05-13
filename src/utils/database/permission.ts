@@ -1,6 +1,6 @@
 import { Permission } from '@models/user';
 
-import { DB } from '.';
+import { DB } from '@models/database';
 
 export default class PermissionManager {
 	private db: DB;

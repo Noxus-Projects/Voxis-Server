@@ -1,7 +1,7 @@
 import Channel from '@models/channel';
 import User from '@models/user';
 
-import { DB } from '.';
+import { DB } from '@models/database';
 
 export default class ChannelManager {
 	private db: DB;

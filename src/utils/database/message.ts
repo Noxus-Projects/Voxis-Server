@@ -2,7 +2,7 @@ import { DbMessage, Message } from '@models/channel';
 
 import { MessageEvents } from '@models/events';
 
-import { DB } from '.';
+import { DB } from '@models/database';
 
 const findMessage = (message: DbMessage, id: string) => message.created.toString() === id;
 

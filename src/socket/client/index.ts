@@ -12,6 +12,8 @@ import VoiceManager from './voice';
 import PermissionsManager from './permission';
 import MessagesManager from './message';
 import NicknameManager from './nickname';
+import UserManager from './user';
+import WhitelistManager from './whitelist';
 
 export interface ClientOptions {
 	client: Socket<EventsMap, EmitMap>;
@@ -24,22 +26,9 @@ export default class Client {
 	public user: User;
 
 	constructor(client: Socket, server: Server, database: Database) {
-		const data = client.handshake.auth.user;
+		this.user = client.handshake.auth.user;
 
-		const current = database.users.get(data.id);
-
-		client.data.id = data.id;
-
-		this.user = {
-			id: data.id,
-			name: data.username,
-			lastConnected: Date.now(),
-			avatar: data.avatar,
-			nickname: current?.nickname ?? '',
-			permissions: current?.permissions ?? [],
-		};
-
-		database.users.create(this.user);
+		client.data.id = this.user.id;
 
 		client.broadcast.emit('userConnected', this.user.id);
 		client.on('disconnect', () => server.emit('userDisconnected', this.user.id));
@@ -57,5 +46,7 @@ export default class Client {
 		new ChannelManager(options);
 		new PermissionsManager(options);
 		new MessagesManager(options);
+		new UserManager(options);
+		new WhitelistManager(options);
 	}
 }
