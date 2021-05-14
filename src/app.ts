@@ -8,6 +8,7 @@ import { Base } from '@utils/functions';
 import rateLimitReached from './api/rateLimit';
 import notFound from './api/notFound';
 import login from './api/login';
+import refresh from './api/refresh';
 
 const getIpAdress = (req: Request) =>
 	(req.headers['cf-connecting-ip'] ??
@@ -50,6 +51,7 @@ export default class App {
 
 	private routeAPI() {
 		this.api.get('/login', login);
+		this.api.get('/refresh', refresh);
 		this.api.use(notFound);
 	}
 

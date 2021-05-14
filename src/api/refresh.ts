@@ -3,14 +3,18 @@ import { Request, Response } from 'express';
 import Discord from '@utils/discord';
 const discord = new Discord();
 
-export default function login(req: Request, res: Response): void {
-	if (!req.query.code) {
-		res.status(401).json({ error: 'Code parameter not present' });
+const authCheck = 'Bearer ';
+
+export default function refresh(req: Request, res: Response): void {
+	if (!req.headers.authorization?.startsWith(authCheck)) {
+		res.status(401).json({ error: 'No refresh token in Authorization header present' });
 		return;
 	}
 
+	const refreshToken = req.headers.authorization.slice(authCheck.length);
+
 	discord
-		.token(req.query.code as string)
+		.refresh(refreshToken)
 		.then((data) =>
 			res.status(200).json({
 				access_token: data.access_token,

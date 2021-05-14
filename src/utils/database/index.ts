@@ -30,6 +30,7 @@ export default class Database {
 		this.cachedb = low(cacheAdapter);
 
 		this.db.defaults({ channels: {}, users: {}, whitelist: [], messages: {}, audit: [] }).write();
+		this.cachedb.defaults({ token: {} }).write();
 
 		this.channels = new ChannelManager(this.db);
 		this.permissions = new PermissionManager(this.db);

@@ -13,7 +13,7 @@ type Next = (err?: ExtendedError) => void;
 const EXPIRY_TIME = 60000;
 
 const connectionLog = (state: string, id: string, socketId: string) =>
-	console.log(chalk.yellow('SOCKET'), state, chalk.cyan(id), `(${socketId})`);
+	console.log(chalk.yellow('SOCKET'), state, '-', chalk.cyan(id), `(${socketId})`);
 
 export default class WebSocket {
 	private io: Server;
@@ -45,11 +45,10 @@ export default class WebSocket {
 	private async handleConnection(socket: Socket) {
 		const user: User = socket.handshake.auth.user;
 
-		connectionLog(chalk.green('•'), user.name, socket.id);
+		connectionLog(chalk.green('• Connected'), user.name, socket.id);
+		socket.on('disconnect', () => connectionLog(chalk.red('• Disconnected'), user.name, socket.id));
 
 		new Client(socket, this.io, this.db);
-
-		socket.on('disconnect', () => connectionLog(chalk.red('•'), user.name, socket.id));
 	}
 
 	private async authorize(socket: Socket, next: Next): Promise<void> {
@@ -63,7 +62,7 @@ export default class WebSocket {
 			const [data, exists] = await Discord.user(token);
 
 			if (!exists || !data) {
-				connectionLog(chalk.red('•'), 'Unknown user', socket.id);
+				connectionLog(chalk.red('• Unauthorized'), 'Unknown user', socket.id);
 				return next(new Error('invalid token'));
 			}
 
@@ -88,7 +87,7 @@ export default class WebSocket {
 		const isOnWhitelist = this.db.whitelist.has(user.id);
 
 		if (!isOnWhitelist) {
-			connectionLog(chalk.red('•'), user.name, socket.id);
+			connectionLog(chalk.red('• Not on whitelist'), user.name, socket.id);
 			return next(new Error('not on whitelist'));
 		}
 

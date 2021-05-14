@@ -17,7 +17,9 @@ export interface CachedData {
 	created: number;
 }
 
-export type CacheSchema = Record<string, CachedData>;
+export interface CacheSchema {
+	token: Record<string, CachedData>;
+}
 
 export type DB = low.LowdbSync<DatabaseSchema>;
 export type Cache = low.LowdbSync<CacheSchema>;
