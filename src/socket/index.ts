@@ -57,15 +57,8 @@ export default class WebSocket {
 
 		const cache = this.db.cache.get(token);
 
-		let userData: { id: string; username: string; avatar: string };
-
 		if (cache && Date.now() - EXPIRY_TIME < cache.created) {
-			const data = this.db.users.get(cache.id) as User;
-
-			userData = {
-				...data,
-				username: data.name,
-			};
+			socket.handshake.auth.user = this.db.users.get(cache.id) as User;
 		} else {
 			const [data, exists] = await Discord.user(token);
 
@@ -74,30 +67,30 @@ export default class WebSocket {
 				return next(new Error('invalid token'));
 			}
 
-			userData = data;
+			const current = this.db.users.get(data.id);
+
+			socket.handshake.auth.user = {
+				id: data.id,
+				name: data.username,
+				lastConnected: Date.now(),
+				avatar: data.avatar,
+				nickname: current?.nickname ?? '',
+				permissions: current?.permissions ?? [],
+			};
+
+			this.db.users.create(socket.handshake.auth.user);
 
 			this.db.cache.set(token, data.id);
 		}
 
-		const isOnWhitelist = this.db.whitelist.has(userData.id);
+		const user = socket.handshake.auth.user;
+
+		const isOnWhitelist = this.db.whitelist.has(user.id);
 
 		if (!isOnWhitelist) {
-			connectionLog(chalk.red('•'), userData.username, socket.id);
+			connectionLog(chalk.red('•'), user.name, socket.id);
 			return next(new Error('not on whitelist'));
 		}
-
-		const current = this.db.users.get(userData.id);
-
-		socket.handshake.auth.user = {
-			id: userData.id,
-			name: userData.username,
-			lastConnected: Date.now(),
-			avatar: userData.avatar,
-			nickname: current?.nickname ?? '',
-			permissions: current?.permissions ?? [],
-		};
-
-		this.db.users.create(socket.handshake.auth.user);
 
 		next();
 	}

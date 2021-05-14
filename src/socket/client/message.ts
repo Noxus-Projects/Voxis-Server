@@ -24,13 +24,13 @@ export default class MessagesManager {
 	private get: MessageEvents.get = (data, reply) => {
 		if (!reply) return;
 
-		if (!data || !data.channel || !data.from || !data.to) {
-			reply('You have not supplied the correct information.');
+		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
+			reply('You are not allowed to see any messages.');
 			return;
 		}
 
-		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
-			reply('You are not allowed to see any messages.');
+		if (!data || !data.channel || data.from == null || data.to == null) {
+			reply('You have not supplied the correct information.');
 			return;
 		}
 
@@ -42,13 +42,13 @@ export default class MessagesManager {
 	private send: MessageEvents.send = (data, reply) => {
 		if (!reply) return;
 
-		if (!data || !data.channel || !data.content) {
-			reply('You have not supplied the correct information.');
+		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
+			reply('You are not permitted to send messages.');
 			return;
 		}
 
-		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
-			reply('You are not permitted to send messages.');
+		if (!data || !data.channel || !data.content) {
+			reply('You have not supplied the correct information.');
 			return;
 		}
 

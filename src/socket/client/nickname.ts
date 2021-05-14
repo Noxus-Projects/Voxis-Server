@@ -26,7 +26,7 @@ export default class NicknameManager {
 			return;
 		}
 
-		const user: string = data.user ?? this.user.id;
+		const user: string = data.user || this.user.id;
 
 		if (!this.database.permissions.has(this.user.id, Permission.EDIT_NICKNAME)) {
 			if (user !== this.user.id) {

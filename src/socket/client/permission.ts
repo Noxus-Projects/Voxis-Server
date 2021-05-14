@@ -35,13 +35,13 @@ export default class PermissionsManager {
 	private add: PermissionEvents.add = (data, reply) => {
 		if (!reply) return;
 
-		if (!data || !data.updated) {
-			reply('You have not supplied the correct information.');
+		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
+			reply('You do not have the permission to add a permission to this user.');
 			return;
 		}
 
-		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
-			reply('You do not have the permission to add a permission to this user.');
+		if (!data || !data.updated) {
+			reply('You have not supplied the correct information.');
 			return;
 		}
 
@@ -53,7 +53,7 @@ export default class PermissionsManager {
 			return;
 		}
 
-		const user: string = data.user ?? this.user.id;
+		const user: string = data.user || this.user.id;
 
 		this.database.permissions.add(user, filtered);
 
@@ -63,17 +63,17 @@ export default class PermissionsManager {
 	private remove: PermissionEvents.remove = (data, reply) => {
 		if (!reply) return;
 
-		if (!data || !data.removed || (data.user && typeof data.user !== 'string')) {
-			reply('You have not supplied the correct information.');
-			return;
-		}
-
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
 			reply('You do not have the permission to remove a permission from this user.');
 			return;
 		}
 
-		const user: string = data.user ?? this.user.id;
+		if (!data || !data.removed || (data.user && typeof data.user !== 'string')) {
+			reply('You have not supplied the correct information.');
+			return;
+		}
+
+		const user: string = data.user || this.user.id;
 
 		this.database.permissions.remove(user, data.removed);
 

@@ -31,7 +31,13 @@ export default class UserManager {
 	 * @param id - The users id.
 	 */
 	public get(id: string): User | undefined {
-		return { ...this.db.get('users').get(id).value(), id };
+		const user = this.db.get('users').get(id).value();
+
+		if (user) {
+			return { ...user, id };
+		}
+
+		return;
 	}
 
 	/**
