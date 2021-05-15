@@ -5,12 +5,12 @@ import http from 'http';
 
 import Database from '@utils/database';
 import Discord from '@utils/discord';
-import User from '@models/user';
+import User, { Status } from '@models/user';
 import Client from './client';
 
 type Next = (err?: ExtendedError) => void;
 
-const EXPIRY_TIME = 60000;
+const EXPIRY_TIME = parseInt(process.env.CACHE_TIMEOUT ?? '') || 60000;
 
 const connectionLog = (state: string, id: string, socketId: string) =>
 	console.log(chalk.yellow('SOCKET'), state, '-', chalk.cyan(id), `(${socketId})`);
@@ -70,8 +70,8 @@ export default class WebSocket {
 
 			socket.handshake.auth.user = {
 				id: data.id,
+				status: current?.status ?? Status.ONLINE,
 				name: data.username,
-				lastConnected: Date.now(),
 				avatar: data.avatar,
 				nickname: current?.nickname ?? '',
 				permissions: current?.permissions ?? [],

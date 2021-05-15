@@ -14,6 +14,7 @@ export default class UserManager {
 		this.database = options.database;
 
 		this.client.on('getUser', (id, callback) => this.get(id, callback));
+		this.client.on('setStatus', (status, callback) => this.status(status, callback));
 	}
 
 	private get: UserEvents.get = (id, reply) => {
@@ -34,5 +35,14 @@ export default class UserManager {
 		}
 
 		reply(user);
+	};
+
+	private status: UserEvents.status = (status, reply) => {
+		if (status && typeof status !== 'number') {
+			reply('That is not a valid status');
+			return;
+		}
+
+		this.database.users.status(this.user.id, status);
 	};
 }

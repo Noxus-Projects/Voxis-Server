@@ -1,4 +1,4 @@
-import User from '@models/user';
+import User, { Status } from '@models/user';
 
 import { DB } from '@models/database';
 
@@ -47,6 +47,10 @@ export default class UserManager {
 	public create(user: User): void {
 		const { id, ...rest } = user;
 		this.db.get('users').set(id, rest).write();
+	}
+
+	public status(user: string, status: Status): void {
+		this.db.get('users').get(user).set('status', status).write();
 	}
 
 	/**

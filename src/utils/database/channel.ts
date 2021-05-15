@@ -28,16 +28,7 @@ export default class ChannelManager {
 	 * Create a channel with a few specified options.
 	 * @param options - The channels options.
 	 */
-	public create({ name, creator }: { name: string; creator: User }): Channel | void {
-		const exists = !this.db
-			.get('channels')
-			.values()
-			.find((channel) => channel.name === name)
-			.isUndefined()
-			.value();
-
-		if (exists) return;
-
+	public create({ name, creator }: { name: string; creator: User }): Channel {
 		const id = Date.now().toString();
 
 		const channel = {
@@ -62,13 +53,13 @@ export default class ChannelManager {
 	}
 
 	get(): Channel[];
-	get(id: string): Channel | void;
+	get(id: string): Channel[] | string;
 	/**
 	 * Get a channel by its id.
 	 * @param id - The channel's id.
 	 * @returns - The channel's information.
 	 */
-	public get(id?: string): Channel | Channel[] | void {
+	public get(id?: string): Channel[] | string {
 		if (!id) {
 			return this.db
 				.get('channels')
@@ -80,9 +71,9 @@ export default class ChannelManager {
 		const channel = this.db.get('channels').get(id).value();
 
 		if (channel) {
-			return { ...channel, id };
+			return [{ ...channel, id }];
 		}
 
-		return;
+		return 'Could not find a channel with that id.';
 	}
 }

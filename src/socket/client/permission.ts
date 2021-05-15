@@ -45,15 +45,21 @@ export default class PermissionsManager {
 			return;
 		}
 
+		const user: string = data.user || this.user.id;
+
 		const filtered = data.updated.filter(
-			(permission) => permission > 0 && permission <= Math.floor(Object.keys(Permission).length / 2)
+			(permission) =>
+				permission > 0 &&
+				permission <= Math.floor(Object.keys(Permission).length / 2) &&
+				!this.database.permissions.has(user, permission)
 		);
 
 		if (filtered.length == 0) {
+			reply(
+				'This user either already has all the given permissions, or there are no valid permissions.'
+			);
 			return;
 		}
-
-		const user: string = data.user || this.user.id;
 
 		this.database.permissions.add(user, filtered);
 

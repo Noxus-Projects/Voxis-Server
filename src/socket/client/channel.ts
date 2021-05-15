@@ -43,6 +43,7 @@ export default class ChannelManager {
 		this.database.channels.remove(id);
 
 		this.server.emit('removedChannel', id);
+		this.database.audit.add({ data: id, type: 'removedChannel', user: this.user.id });
 	};
 
 	private edit: ChannelEvents.edit = (options, reply) => {
@@ -53,7 +54,7 @@ export default class ChannelManager {
 			return;
 		}
 
-		if (this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
+		if (!this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
 			reply('You are not permitted to edit that channel.');
 			return;
 		}
@@ -66,6 +67,7 @@ export default class ChannelManager {
 		const updated = this.database.channels.edit(options.id, options.name);
 
 		this.server.emit('updatedChannel', updated);
+		this.database.audit.add({ data: updated.id, type: 'editedChannel', user: this.user.id });
 	};
 
 	private get: ChannelEvents.get = (id, reply) => {
@@ -104,11 +106,7 @@ export default class ChannelManager {
 
 		const channel = this.database.channels.create({ name, creator: this.user });
 
-		if (!channel) {
-			reply('A channel with that name already exists.');
-			return;
-		}
-
 		this.server.emit('createdChannel', channel);
+		this.database.audit.add({ data: channel.id, type: 'createdChannel', user: this.user.id });
 	};
 }

@@ -6,9 +6,8 @@ import cors from 'cors';
 import { Base } from '@utils/functions';
 
 import rateLimitReached from './api/rateLimit';
-import notFound from './api/notFound';
-import login from './api/login';
-import refresh from './api/refresh';
+
+import APIRouter from 'api';
 
 const getIpAdress = (req: Request) =>
 	(req.headers['cf-connecting-ip'] ??
@@ -46,13 +45,7 @@ export default class App {
 		/**	Use Rate limiter on api. */
 		this.api.use(limiter);
 
-		this.routeAPI();
-	}
-
-	private routeAPI() {
-		this.api.get('/login', login);
-		this.api.get('/refresh', refresh);
-		this.api.use(notFound);
+		APIRouter(this.api);
 	}
 
 	private logInfo(req: Request, res: Response, next: NextFunction) {

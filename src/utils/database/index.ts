@@ -10,12 +10,14 @@ import MessageManager from './message';
 import UserManager from './user';
 import PermissionManager from './permission';
 import CacheManager from './cache';
+import AuditManager from './audit';
 
 export default class Database {
 	private db: DB;
 	private cachedb: Cache;
 
 	public channels: ChannelManager;
+	public audit: AuditManager;
 	public messages: MessageManager;
 	public permissions: PermissionManager;
 	public users: UserManager;
@@ -33,6 +35,7 @@ export default class Database {
 		this.cachedb.defaults({ token: {} }).write();
 
 		this.channels = new ChannelManager(this.db);
+		this.audit = new AuditManager(this.db);
 		this.permissions = new PermissionManager(this.db);
 		this.users = new UserManager(this.db);
 		this.messages = new MessageManager(this.db);

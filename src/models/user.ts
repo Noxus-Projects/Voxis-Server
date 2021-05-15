@@ -3,11 +3,17 @@ export default interface User {
 	avatar: string;
 	id: string;
 	nickname: string;
-	lastConnected: number;
+	status: Status;
 	permissions: Permission[];
 }
 
 export type DbUser = Omit<User, 'id'>;
+
+export enum Status {
+	ONLINE = 1,
+	AWAY = 2,
+	OFFLINE = 3,
+}
 
 export enum Permission {
 	MUTE_OTHERS = 1,

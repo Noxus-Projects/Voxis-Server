@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace */
-import User, { Permission } from '@models/user';
+import User, { Permission, Status } from '@models/user';
 import { Message } from '@models/channel';
 import Channel from '@models/channel';
 
@@ -22,6 +22,7 @@ export interface EventsMap {
 	leaveRoom: RoomEvents.change;
 
 	getUser: UserEvents.get;
+	setStatus: UserEvents.status;
 
 	voiceData: (data: string) => void;
 
@@ -43,6 +44,8 @@ export namespace WhitelistEvents {
 }
 
 export namespace UserEvents {
+	export type status = (status: Status, reply: Reply) => void;
+
 	export type get = (id: string | null, reply: (msg: string | User) => void) => void;
 }
 
@@ -75,10 +78,7 @@ export namespace ChannelEvents {
 	 * @param id - The id of the channel.
 	 * @param reply - Replies with the channel, an array of channels or an error.
 	 */
-	export type get = (
-		id: string | null,
-		reply?: (channel: Channel | Channel[] | string | void) => void
-	) => void;
+	export type get = (id: string | null, reply?: (channel: Channel[] | string) => void) => void;
 }
 
 export namespace MessageEvents {

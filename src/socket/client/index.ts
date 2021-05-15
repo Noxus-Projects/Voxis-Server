@@ -1,6 +1,6 @@
 import { Socket, Server } from 'socket.io';
 
-import User from '@models/user';
+import User, { Status } from '@models/user';
 import Database from '@utils/database';
 
 import { EventsMap } from '@models/events';
@@ -30,8 +30,10 @@ export default class Client {
 
 		client.data.id = this.user.id;
 
-		client.broadcast.emit('userConnected', this.user.id);
-		client.on('disconnect', () => server.emit('userDisconnected', this.user.id));
+		if (this.user.status === Status.ONLINE || this.user.status === Status.AWAY) {
+			client.broadcast.emit('userConnected', this.user.id);
+			client.on('disconnect', () => server.emit('userDisconnected', this.user.id));
+		}
 
 		const options: ClientOptions = {
 			database,
