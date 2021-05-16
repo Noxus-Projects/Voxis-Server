@@ -28,7 +28,7 @@ export default class NicknameManager {
 
 		const user: string = data.user || this.user.id;
 
-		if (!this.database.permissions.has(this.user.id, Permission.EDIT_NICKNAME)) {
+		if (!this.database.permissions.has(this.user.id, Permission.EDIT_NICKNAMES)) {
 			if (user !== this.user.id) {
 				reply('You are not permitted to change other peoples nicknames.');
 				return;
@@ -38,5 +38,10 @@ export default class NicknameManager {
 		this.database.users.editNickname(user, data.updated);
 
 		this.server.emit('editedNickname', { user, updated: data.updated });
+		this.database.audit.add({
+			data: { user, updated: data.updated },
+			type: 'editedNickname',
+			user: this.user.id,
+		});
 	};
 }

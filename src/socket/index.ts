@@ -32,14 +32,6 @@ export default class WebSocket {
 
 		this.io.use((socket, next) => this.authorize(socket, next));
 		this.io.on('connection', (client) => this.handleConnection(client));
-
-		this.addOwner();
-	}
-
-	private addOwner() {
-		const owner = process.env.OWNER ?? '';
-
-		this.db.whitelist.add(owner);
 	}
 
 	private async handleConnection(socket: Socket) {
@@ -77,7 +69,7 @@ export default class WebSocket {
 				permissions: current?.permissions ?? [],
 			};
 
-			this.db.users.create(socket.handshake.auth.user);
+			this.db.users.set(socket.handshake.auth.user);
 
 			this.db.cache.set(token, data.id);
 		}
@@ -86,7 +78,7 @@ export default class WebSocket {
 
 		const isOnWhitelist = this.db.whitelist.has(user.id);
 
-		if (!isOnWhitelist) {
+		if (!isOnWhitelist && user.id !== process.env.OWNER) {
 			connectionLog(chalk.red('• Not on whitelist'), user.name, socket.id);
 			return next(new Error('not on whitelist'));
 		}

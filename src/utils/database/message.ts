@@ -16,9 +16,11 @@ export default class MessageManager {
 	 * Edit a given message in a given channel.
 	 * @param options - The edit options.
 	 */
-	public edit(options: MessageEvents.Edit): Message {
+	public edit(options: MessageEvents.Edit): Message | void {
 		const messages = this.db.get('messages').get(options.channel);
 		const old = messages.find((msg) => findMessage(msg, options.id)).value();
+
+		if (!old) return;
 
 		const updated = { ...old, content: options.updated };
 
@@ -29,7 +31,7 @@ export default class MessageManager {
 	}
 
 	get(channel: string, options: { from: number; to: number }): Message[];
-	get(channel: string, id: string): Message;
+	get(channel: string, id: string): Message | undefined;
 	/**
 	 * Get a message by its id and channel id.
 	 * @param channel - The channels id.
@@ -50,14 +52,19 @@ export default class MessageManager {
 				.map((entry) => ({ ...entry[1], id: entry[0] }));
 		}
 
-		return {
-			...this.db
-				.get('messages')
-				.get(channel)
-				.find((msg) => findMessage(msg, options))
-				.value(),
-			id: options,
-		};
+		const message = this.db
+			.get('messages')
+			.get(channel)
+			.find((msg) => findMessage(msg, options))
+			.value();
+
+		if (message)
+			return {
+				...message,
+				id: options,
+			};
+
+		return;
 	}
 
 	/**

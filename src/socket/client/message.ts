@@ -95,7 +95,8 @@ export default class MessagesManager {
 
 		this.database.messages.remove(data.channel, data.id);
 
-		this.server.emit('removedMessage', { message, channel: data.channel });
+		this.server.emit('removedMessage', { id: message.id, channel: data.channel });
+		this.database.audit.add({ type: 'removedMessage', data: message.id, user: this.user.id });
 	};
 
 	private edit: MessageEvents.edit = (data, reply) => {
@@ -120,6 +121,12 @@ export default class MessagesManager {
 
 		const updated = this.database.messages.edit(data);
 
+		if (!updated) {
+			reply('There is no message with that id.');
+			return;
+		}
+
 		this.server.emit('editedMessage', { message: updated, channel: data.channel });
+		this.database.audit.add({ type: 'editedMessage', data: message.id, user: this.user.id });
 	};
 }

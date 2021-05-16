@@ -61,6 +61,11 @@ export default class PermissionsManager {
 			return;
 		}
 
+		if (user === process.env.OWNER) {
+			reply('This user is the owner');
+			return;
+		}
+
 		this.database.permissions.add(user, filtered);
 
 		this.server.emit('addedPermission', { user, updated: filtered });
@@ -80,6 +85,11 @@ export default class PermissionsManager {
 		}
 
 		const user: string = data.user || this.user.id;
+
+		if (user === process.env.OWNER) {
+			reply('This user is the owner');
+			return;
+		}
 
 		this.database.permissions.remove(user, data.removed);
 

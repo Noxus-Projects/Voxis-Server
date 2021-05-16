@@ -15,7 +15,7 @@ export interface EmitMap {
 
 	sentMessage: MessageEmit.update;
 	editedMessage: MessageEmit.update;
-	removedMessage: MessageEmit.update;
+	removedMessage: MessageEmit.remove;
 
 	removedChannel: ChannelEmit.remove;
 	updatedChannel: ChannelEmit.update;
@@ -75,6 +75,13 @@ export namespace MessageEmit {
 		channel: string;
 		message: Message;
 	}
+
+	interface Remove {
+		id: string;
+		channel: string;
+	}
+
+	export type remove = (options: Remove) => void;
 
 	export type update = (options: Update) => void;
 }

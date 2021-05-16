@@ -7,8 +7,9 @@ export default interface Action {
 }
 
 type ChannelActions = 'removedChannel' | 'editedChannel' | 'createdChannel';
-type MessageActions = 'sentMessage' | 'removedMessage' | 'editedMessage';
+type MessageActions = 'removedMessage' | 'editedMessage';
+type NicknameActions = 'editedNickname';
 
-export type ActionType = ChannelActions | MessageActions;
+export type ActionType = ChannelActions | MessageActions | NicknameActions;
 
 export type DbAction = Omit<Action, 'id'>;

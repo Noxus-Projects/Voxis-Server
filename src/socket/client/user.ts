@@ -30,7 +30,7 @@ export default class UserManager {
 		const user = this.database.users.get(userId);
 
 		if (!user) {
-			reply('Could not find a user with that id');
+			reply('Could not find a user with that id.');
 			return;
 		}
 

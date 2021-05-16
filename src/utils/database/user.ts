@@ -1,6 +1,12 @@
-import User, { Status } from '@models/user';
+import User, { Permission, Status } from '@models/user';
 
 import { DB } from '@models/database';
+
+export function allPermissions(): Permission[] {
+	return Object.keys(Permission)
+		.filter((k) => !isNaN(Number(k)))
+		.map((permission) => parseInt(permission));
+}
 
 export default class UserManager {
 	private db: DB;
@@ -34,6 +40,14 @@ export default class UserManager {
 		const user = this.db.get('users').get(id).value();
 
 		if (user) {
+			if (id === process.env.OWNER) {
+				return {
+					...user,
+					id,
+					permissions: allPermissions(),
+				};
+			}
+
 			return { ...user, id };
 		}
 
@@ -44,7 +58,20 @@ export default class UserManager {
 	 * Creates a user in the database.
 	 * @param user - The user to add.
 	 */
-	public create(user: User): void {
+	public set(user: User): void {
+		if (!user.permissions || user.permissions.length == 0) {
+			user.permissions = [
+				Permission.JOIN_ROOM,
+				Permission.SEE_CHANNELS,
+				Permission.SPEAK,
+				Permission.SEND_MESSAGE,
+			];
+		}
+
+		if (user.id === process.env.OWNER) {
+			user.permissions = [];
+		}
+
 		const { id, ...rest } = user;
 		this.db.get('users').set(id, rest).write();
 	}

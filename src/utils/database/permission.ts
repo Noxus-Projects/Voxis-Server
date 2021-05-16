@@ -1,6 +1,7 @@
 import { Permission } from '@models/user';
 
 import { DB } from '@models/database';
+import { allPermissions } from './user';
 
 export default class PermissionManager {
 	private db: DB;
@@ -15,6 +16,10 @@ export default class PermissionManager {
 	 * @returns Whether or not the user has the permission.
 	 */
 	public has(id: string, permission: Permission): boolean {
+		if (id === process.env.OWNER) {
+			return true;
+		}
+
 		return this.db.get('users').get(id).get('permissions').includes(permission).value();
 	}
 
@@ -24,6 +29,10 @@ export default class PermissionManager {
 	 * @returns The requested permissions.
 	 */
 	public get(id: string): Permission[] {
+		if (id === process.env.OWNER) {
+			return allPermissions();
+		}
+
 		return this.db.get('users').get(id).get('permissions').value();
 	}
 
