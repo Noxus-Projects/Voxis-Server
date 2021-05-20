@@ -28,9 +28,13 @@ export default class PermissionManager {
 	 * @param id - The users id.
 	 * @returns The requested permissions.
 	 */
-	public get(id: string): Permission[] {
+	public get(id: string): Permission[] | void {
 		if (id === process.env.OWNER) {
 			return allPermissions();
+		}
+
+		if (!this.db.get('users').get(id).value()) {
+			return;
 		}
 
 		return this.db.get('users').get(id).get('permissions').value();

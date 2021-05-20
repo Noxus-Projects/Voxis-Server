@@ -21,7 +21,7 @@ export default class UserManager {
 		if (!reply) return;
 
 		if (id && typeof id !== 'string') {
-			reply('That is not a valid user id');
+			reply({ error: 'That is not a valid user id' });
 			return;
 		}
 
@@ -30,16 +30,16 @@ export default class UserManager {
 		const user = this.database.users.get(userId);
 
 		if (!user) {
-			reply('Could not find a user with that id.');
+			reply({ error: 'Could not find a user with that id.' });
 			return;
 		}
 
-		reply(user);
+		reply({ success: user });
 	};
 
 	private status: UserEvents.status = (status, reply) => {
 		if (status && typeof status !== 'number') {
-			reply('That is not a valid status');
+			reply({ error: 'That is not a valid status' });
 			return;
 		}
 

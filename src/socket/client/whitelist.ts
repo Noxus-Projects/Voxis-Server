@@ -23,17 +23,17 @@ export default class WhitelistManager {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_WHITELIST)) {
-			reply('You are not permitted to add users to the whitelist');
+			reply({ error: 'You are not permitted to add users to the whitelist' });
 			return;
 		}
 
 		if (!id || typeof id !== 'string') {
-			reply('That is not a valid user id');
+			reply({ error: 'That is not a valid user id' });
 			return;
 		}
 
 		if (this.database.whitelist.has(id)) {
-			reply('That user is already whitelisted');
+			reply({ error: 'That user is already whitelisted' });
 			return;
 		}
 
@@ -45,17 +45,17 @@ export default class WhitelistManager {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_WHITELIST)) {
-			reply('You are not permitted to remove users from the whitelist');
+			reply({ error: 'You are not permitted to remove users from the whitelist' });
 			return;
 		}
 
 		if (!id || typeof id !== 'string') {
-			reply('That is not a valid user id');
+			reply({ error: 'That is not a valid user id' });
 			return;
 		}
 
 		if (!this.database.whitelist.has(id)) {
-			reply('That user is not whitelisted');
+			reply({ error: 'That user is not whitelisted' });
 			return;
 		}
 

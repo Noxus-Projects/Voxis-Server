@@ -21,12 +21,12 @@ export default class RoomManager {
 
 	private join: RoomEvents.change = (data, reply) => {
 		if (!this.database.permissions.has(this.user.id, Permission.JOIN_ROOM)) {
-			reply('You are not permitted to join this room.');
+			reply({ error: 'You are not permitted to join this room.' });
 			return;
 		}
 
 		if (!data || !data.room) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
@@ -43,12 +43,12 @@ export default class RoomManager {
 			user !== this.user.id &&
 			!this.database.permissions.has(this.user.id, Permission.DISCONNECT_OTHERS)
 		) {
-			reply('You are not permitted to disconnect others.');
+			reply({ error: 'You are not permitted to disconnect others.' });
 			return;
 		}
 
 		if (!data || !data.room) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 

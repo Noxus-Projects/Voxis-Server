@@ -9,6 +9,7 @@
     "test-build": "tsc --noEmit",
     "lint": "eslint src",
     "client": "ts-node-dev src/test.ts",
+    "clear-cache": "rm data/cache.json",
     "dev": "ts-node-dev -r tsconfig-paths/register src"
   },
   "devDependencies": {

@@ -25,27 +25,39 @@ export default class PermissionsManager {
 		if (!reply) return;
 
 		if (typeof id !== 'string') {
-			reply('That is not a valid user id');
+			reply({ error: 'That is not a valid user id' });
 			return;
 		}
 
-		reply(this.database.permissions.get(id));
+		const permissions = this.database.permissions.get(id);
+
+		if (!permissions) {
+			reply({ error: 'Could not find a user with that id' });
+			return;
+		}
+
+		reply({ success: permissions });
 	};
 
 	private add: PermissionEvents.add = (data, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
-			reply('You do not have the permission to add a permission to this user.');
+			reply({ error: 'You do not have the permission to add a permission to this user.' });
 			return;
 		}
 
 		if (!data || !data.updated) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const user: string = data.user || this.user.id;
+
+		if (user === process.env.OWNER) {
+			reply({ error: 'This user is the owner' });
+			return;
+		}
 
 		const filtered = data.updated.filter(
 			(permission) =>
@@ -55,14 +67,11 @@ export default class PermissionsManager {
 		);
 
 		if (filtered.length == 0) {
-			reply(
-				'This user either already has all the given permissions, or there are no valid permissions.'
-			);
-			return;
-		}
+			reply({
+				error:
+					'This user either already has all the given permissions, or there are no valid permissions.',
+			});
 
-		if (user === process.env.OWNER) {
-			reply('This user is the owner');
 			return;
 		}
 
@@ -75,19 +84,19 @@ export default class PermissionsManager {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.MANAGE_PERMISSIONS)) {
-			reply('You do not have the permission to remove a permission from this user.');
+			reply({ error: 'You do not have the permission to remove a permission from this user.' });
 			return;
 		}
 
 		if (!data || !data.removed || (data.user && typeof data.user !== 'string')) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const user: string = data.user || this.user.id;
 
 		if (user === process.env.OWNER) {
-			reply('This user is the owner');
+			reply({ error: 'This user is the owner' });
 			return;
 		}
 

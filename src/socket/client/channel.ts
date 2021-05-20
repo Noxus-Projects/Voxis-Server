@@ -26,17 +26,17 @@ export default class ChannelManager {
 		if (!reply) return;
 
 		if (typeof id !== 'string') {
-			reply('That is not a valid channel id');
+			reply({ error: 'That is not a valid channel id' });
 			return;
 		}
 
 		if (!this.database.permissions.has(this.user.id, Permission.REMOVE_CHANNEL)) {
-			reply('You are not permitted to remove that channel.');
+			reply({ error: 'You are not permitted to remove that channel.' });
 			return;
 		}
 
 		if (!this.database.channels.get(id)) {
-			reply('There is no channel with that id.');
+			reply({ error: 'There is no channel with that id.' });
 			return;
 		}
 
@@ -50,17 +50,17 @@ export default class ChannelManager {
 		if (!reply) return;
 
 		if (!options || !options.id || !options.name) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		if (!this.database.permissions.has(this.user.id, Permission.EDIT_CHANNEL)) {
-			reply('You are not permitted to edit that channel.');
+			reply({ error: 'You are not permitted to edit that channel.' });
 			return;
 		}
 
 		if (!this.database.channels.get(options.id)) {
-			reply('There is no channel with that id.');
+			reply({ error: 'There is no channel with that id.' });
 			return;
 		}
 
@@ -74,33 +74,40 @@ export default class ChannelManager {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
-			reply('You are not allowed to see any channels.');
+			reply({ error: 'You are not allowed to see any channels.' });
 			return;
 		}
 
 		if (typeof id == 'string') {
-			reply(this.database.channels.get(id));
+			const channel = this.database.channels.get(id);
+
+			if (!channel) {
+				reply({ error: 'Could not find a channel with that id.' });
+				return;
+			}
+
+			reply({ success: channel });
 			return;
 		}
 
 		if (!id) {
-			reply(this.database.channels.get());
+			reply({ success: this.database.channels.get() });
 			return;
 		}
 
-		reply('That is not a valid channel id');
+		reply({ error: 'That is not a valid channel id' });
 	};
 
 	private create: ChannelEvents.create = (name, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.CREATE_CHANNEL)) {
-			reply('You are not permitted to create a channel.');
+			reply({ error: 'You are not permitted to create a channel.' });
 			return;
 		}
 
 		if (typeof name !== 'string') {
-			reply('That is not a valid channel name');
+			reply({ error: 'That is not a valid channel name' });
 			return;
 		}
 

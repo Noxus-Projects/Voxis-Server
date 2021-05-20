@@ -22,7 +22,7 @@ export default class NicknameManager {
 		if (!reply) return;
 
 		if (!data || !data.updated) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
@@ -30,7 +30,7 @@ export default class NicknameManager {
 
 		if (!this.database.permissions.has(this.user.id, Permission.EDIT_NICKNAMES)) {
 			if (user !== this.user.id) {
-				reply('You are not permitted to change other peoples nicknames.');
+				reply({ error: 'You are not permitted to change other peoples nicknames.' });
 				return;
 			}
 		}
@@ -38,6 +38,7 @@ export default class NicknameManager {
 		this.database.users.editNickname(user, data.updated);
 
 		this.server.emit('editedNickname', { user, updated: data.updated });
+
 		this.database.audit.add({
 			data: { user, updated: data.updated },
 			type: 'editedNickname',

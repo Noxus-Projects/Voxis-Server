@@ -4,6 +4,7 @@ export default interface User {
 	id: string;
 	nickname: string;
 	status: Status;
+	owner: boolean;
 	permissions: Permission[];
 }
 
@@ -32,4 +33,5 @@ export enum Permission {
 	MANAGE_PERMISSIONS = 14,
 	EDIT_NICKNAMES = 15,
 	SPEAK = 16,
+	CLEAR_CACHE = 17,
 }

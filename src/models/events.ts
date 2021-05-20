@@ -26,13 +26,23 @@ export interface EventsMap {
 
 	voiceData: (data: string) => void;
 
+	clearCache: CacheEvents.clear;
+
 	addWhitelist: WhitelistEvents.add;
 	removeWhitelist: WhitelistEvents.remove;
 
 	editNickname: NicknameEvents.edit;
 }
 
-export type Reply = (message: string) => void;
+interface SuccessMessage<T = string> {
+	success: T;
+}
+
+interface ErrorMessage<T = string> {
+	error: T;
+}
+
+export type Reply = (message: SuccessMessage | ErrorMessage) => void;
 
 export namespace VoiceEvents {
 	export type send = (data: string) => void;
@@ -46,7 +56,10 @@ export namespace WhitelistEvents {
 export namespace UserEvents {
 	export type status = (status: Status, reply: Reply) => void;
 
-	export type get = (id: string | null, reply: (msg: string | User) => void) => void;
+	export type get = (
+		id: string | null,
+		reply: (msg: ErrorMessage | SuccessMessage<User>) => void
+	) => void;
 }
 
 export namespace ChannelEvents {
@@ -78,7 +91,10 @@ export namespace ChannelEvents {
 	 * @param id - The id of the channel.
 	 * @param reply - Replies with the channel, an array of channels or an error.
 	 */
-	export type get = (id: string | null, reply?: (channel: Channel[] | string) => void) => void;
+	export type get = (
+		id: string | null,
+		reply?: (channel: ErrorMessage | SuccessMessage<Channel[]>) => void
+	) => void;
 }
 
 export namespace MessageEvents {
@@ -97,7 +113,10 @@ export namespace MessageEvents {
 		to: number;
 	}
 
-	export type get = (options: Get, reply?: (message: Message | Message[] | string) => void) => void;
+	export type get = (
+		options: Get,
+		reply?: (message: ErrorMessage | SuccessMessage<Message[]>) => void
+	) => void;
 
 	interface Send {
 		/**
@@ -113,7 +132,7 @@ export namespace MessageEvents {
 	/**
 	 * Sends a message in a given channel.
 	 * @param options - An object containing the id of a channel and the message to send.
-	 * @param reply - Replies when an eror occurs.
+	 * @param reply - Replies when an error occurs.
 	 * @emits 'message' - The sent message, with the channel it was sent in.
 	 */
 	export type send = (options: Send, reply?: Reply) => void;
@@ -132,7 +151,7 @@ export namespace MessageEvents {
 	/**
 	 * Removes a message in a given channel.
 	 * @param options - An object containing the id of a channel and the message to remove.
-	 * @param reply - Replies when an eror occurs.
+	 * @param reply - Replies when an error occurs.
 	 * @emits 'removedMessage' - The removed message, with the channel it was sent in.
 	 */
 	export type remove = (options: Remove, reply?: Reply) => void;
@@ -155,7 +174,7 @@ export namespace MessageEvents {
 	/**
 	 * Edits a message in a given channel.
 	 * @param options - An object containing the id of a channel and the message to edit.
-	 * @param reply - Replies when an eror occurs.
+	 * @param reply - Replies when an error occurs.
 	 * @emits 'editedMessage' - The edited message, with the channel it was sent in.
 	 */
 	export type edit = (options: Edit, reply?: Reply) => void;
@@ -179,7 +198,11 @@ export namespace NicknameEvents {
 	 * @param reply - The reply when an error occurs.
 	 * @emits 'editedNickname' - The new nickname, with the user that had the nickname edited
 	 */
-	export type edit = (data: Edit, reply: (message: string) => void) => void;
+	export type edit = (data: Edit, reply: Reply) => void;
+}
+
+export namespace CacheEvents {
+	export type clear = (reply: Reply) => void;
 }
 
 export namespace PermissionEvents {
@@ -188,7 +211,10 @@ export namespace PermissionEvents {
 	 * @param id - The users id.
 	 * @param reply - Replies with a list of permissions.
 	 */
-	export type get = (id: string, reply: (permissions: Permission[] | string) => void) => void;
+	export type get = (
+		id: string,
+		reply: (permissions: ErrorMessage | SuccessMessage<Permission[]>) => void
+	) => void;
 
 	interface Add {
 		/**
@@ -234,5 +260,5 @@ export namespace RoomEvents {
 		user?: string;
 	}
 
-	export type change = (data: Change, reply: (message: string) => void) => void;
+	export type change = (data: Change, reply: Reply) => void;
 }

@@ -13,4 +13,8 @@ export default class CacheManager {
 	public set(token: string, id: string): void {
 		this.db.get('token').set(token, { id, created: Date.now() }).write();
 	}
+
+	public clear(): void {
+		this.db.defaults({ token: {} }).write();
+	}
 }

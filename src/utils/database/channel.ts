@@ -53,13 +53,13 @@ export default class ChannelManager {
 	}
 
 	get(): Channel[];
-	get(id: string): Channel[] | string;
+	get(id: string): Channel[] | void;
 	/**
 	 * Get a channel by its id.
 	 * @param id - The channel's id.
 	 * @returns - The channel's information.
 	 */
-	public get(id?: string): Channel[] | string {
+	public get(id?: string): Channel[] | void {
 		if (!id) {
 			return this.db
 				.get('channels')
@@ -74,6 +74,6 @@ export default class ChannelManager {
 			return [{ ...channel, id }];
 		}
 
-		return 'Could not find a channel with that id.';
+		return;
 	}
 }

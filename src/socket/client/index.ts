@@ -6,14 +6,15 @@ import Database from '@utils/database';
 import { EventsMap } from '@models/events';
 import { EmitMap } from '@models/emit';
 
-import ChannelManager from './channel';
-import RoomManager from './room';
-import VoiceManager from './voice';
 import PermissionsManager from './permission';
-import MessagesManager from './message';
-import NicknameManager from './nickname';
-import UserManager from './user';
 import WhitelistManager from './whitelist';
+import NicknameManager from './nickname';
+import MessagesManager from './message';
+import ChannelManager from './channel';
+import CacheManager from './cache';
+import VoiceManager from './voice';
+import RoomManager from './room';
+import UserManager from './user';
 
 export interface ClientOptions {
 	client: Socket<EventsMap, EmitMap>;
@@ -50,5 +51,6 @@ export default class Client {
 		new MessagesManager(options);
 		new UserManager(options);
 		new WhitelistManager(options);
+		new CacheManager(options);
 	}
 }

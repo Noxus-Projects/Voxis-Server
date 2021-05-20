@@ -25,37 +25,37 @@ export default class MessagesManager {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEE_CHANNELS)) {
-			reply('You are not allowed to see any messages.');
+			reply({ error: 'You are not allowed to see any messages.' });
 			return;
 		}
 
 		if (!data || !data.channel || data.from == null || data.to == null) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const messages = this.database.messages.get(data.channel, { from: data.from, to: data.to });
 
-		reply(messages);
+		reply({ success: messages });
 	};
 
 	private send: MessageEvents.send = (data, reply) => {
 		if (!reply) return;
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
-			reply('You are not permitted to send messages.');
+			reply({ error: 'You are not permitted to send messages.' });
 			return;
 		}
 
 		if (!data || !data.channel || !data.content) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const channelExists = this.database.channels.get(data.channel);
 
 		if (!channelExists) {
-			reply('That channel does not exist.');
+			reply({ error: 'That channel does not exist.' });
 			return;
 		}
 
@@ -75,20 +75,20 @@ export default class MessagesManager {
 		if (!reply) return;
 
 		if (!data || !data.channel || !data.id) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const message = this.database.messages.get(data.channel, data.id);
 
 		if (!message) {
-			reply('There is no message with that id.');
+			reply({ error: 'There is no message with that id.' });
 			return;
 		}
 
 		if (!this.database.permissions.has(this.user.id, Permission.SEND_MESSAGE)) {
 			if (message.author !== this.user.id) {
-				reply('You are not the author of this message.');
+				reply({ error: 'You are not the author of this message.' });
 				return;
 			}
 		}
@@ -103,26 +103,26 @@ export default class MessagesManager {
 		if (!reply) return;
 
 		if (!data || !data.channel || !data.id || !data.updated) {
-			reply('You have not supplied the correct information.');
+			reply({ error: 'You have not supplied the correct information.' });
 			return;
 		}
 
 		const message = this.database.messages.get(data.channel, data.id);
 
 		if (!message) {
-			reply('There is no message with that id.');
+			reply({ error: 'There is no message with that id.' });
 			return;
 		}
 
 		if (message.author !== this.user.id) {
-			reply('You are not the author of this message.');
+			reply({ error: 'You are not the author of this message.' });
 			return;
 		}
 
 		const updated = this.database.messages.edit(data);
 
 		if (!updated) {
-			reply('There is no message with that id.');
+			reply({ error: 'There is no message with that id.' });
 			return;
 		}
 

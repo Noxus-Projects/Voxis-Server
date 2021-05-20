@@ -60,16 +60,19 @@ export default class WebSocket {
 
 			const current = this.db.users.get(data.id);
 
-			socket.handshake.auth.user = {
+			const user: User = {
 				id: data.id,
 				status: current?.status ?? Status.ONLINE,
 				name: data.username,
 				avatar: data.avatar,
 				nickname: current?.nickname ?? '',
 				permissions: current?.permissions ?? [],
+				owner: data.id === process.env.OWNER,
 			};
 
-			this.db.users.set(socket.handshake.auth.user);
+			socket.handshake.auth.user = user;
+
+			this.db.users.set(user);
 
 			this.db.cache.set(token, data.id);
 		}

@@ -75,6 +75,11 @@ export default class API {
 			return;
 		}
 
+		if (!channel) {
+			res.json({ error: 'Could not find a channel with that id.' });
+			return;
+		}
+
 		res.json(channel[0]);
 	}
 
