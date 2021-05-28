@@ -15,6 +15,6 @@ export default class CacheManager {
 	}
 
 	public clear(): void {
-		this.db.defaults({ token: {} }).write();
+		this.db.unset('token').write();
 	}
 }

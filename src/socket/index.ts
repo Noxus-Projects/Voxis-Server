@@ -10,7 +10,7 @@ import Client from './client';
 
 type Next = (err?: ExtendedError) => void;
 
-const EXPIRY_TIME = parseInt(process.env.CACHE_TIMEOUT ?? '') || 60000;
+export const EXPIRY_TIME = parseInt(process.env.CACHE_TIMEOUT ?? '') || 60000;
 
 const connectionLog = (state: string, id: string, socketId: string) =>
 	console.log(chalk.yellow('SOCKET'), state, '-', chalk.cyan(id), `(${socketId})`);
@@ -19,7 +19,7 @@ export default class WebSocket {
 	private io: Server;
 	private db: Database;
 
-	constructor(server: http.Server) {
+	constructor(server: http.Server, database: Database) {
 		this.io = new Server(server, {
 			path: '/socket',
 			cors: {
@@ -28,7 +28,7 @@ export default class WebSocket {
 			},
 		});
 
-		this.db = new Database();
+		this.db = database;
 
 		this.io.use((socket, next) => this.authorize(socket, next));
 		this.io.on('connection', (client) => this.handleConnection(client));

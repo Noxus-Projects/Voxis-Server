@@ -2,14 +2,14 @@ import low from 'lowdb';
 
 import { DbChannel, DbMessage } from '@models/channel';
 import { DbUser } from '@models/user';
-import { DbAction } from '@models/action';
+import Action from '@models/action';
 
 export interface DatabaseSchema {
 	channels: Record<string, DbChannel>;
 	users: Record<string, DbUser>;
 	whitelist: Array<string>;
 	messages: Record<string, Array<DbMessage>>;
-	audit: Array<DbAction>;
+	audit: Array<Action>;
 }
 
 export interface CachedData {

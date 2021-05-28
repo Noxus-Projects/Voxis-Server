@@ -11,5 +11,3 @@ type MessageActions = 'removedMessage' | 'editedMessage';
 type NicknameActions = 'editedNickname';
 
 export type ActionType = ChannelActions | MessageActions | NicknameActions;
-
-export type DbAction = Omit<Action, 'id'>;

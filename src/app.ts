@@ -4,11 +4,12 @@ import chalk from 'chalk';
 import { Base, getIpAdress } from '@utils/functions';
 
 import API from 'api';
+import Database from '@utils/database';
 
 export default class App {
 	public server: Express;
 
-	constructor() {
+	constructor(database: Database) {
 		this.server = express();
 
 		/**	Log every incoming request to the console. */
@@ -17,7 +18,7 @@ export default class App {
 		/**	Serve static files from public folder. */
 		this.server.use(express.static(Base('public')));
 
-		const api = new API();
+		const api = new API(database);
 
 		/**	Redirect /api to api server. */
 		this.server.use('/api', api.app);

@@ -4,3 +4,4 @@ data
 .env
 yarn-error.log
 src/test.ts
+tsconfig.tsbuildinfo

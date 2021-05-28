@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 import Channel from '@models/channel';
 import User from '@models/user';
 
@@ -29,7 +31,7 @@ export default class ChannelManager {
 	 * @param options - The channels options.
 	 */
 	public create({ name, creator }: { name: string; creator: User }): Channel {
-		const id = Date.now().toString();
+		const id = nanoid();
 
 		const channel = {
 			created: Date.now(),

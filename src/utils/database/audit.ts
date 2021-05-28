@@ -1,5 +1,6 @@
-import Action, { ActionType, DbAction } from '@models/action';
+import { nanoid } from 'nanoid';
 
+import Action, { ActionType } from '@models/action';
 import { DB } from '@models/database';
 
 export default class AuditManager {
@@ -9,30 +10,27 @@ export default class AuditManager {
 	}
 
 	public add(options: { data: unknown; user: string; type: ActionType }): void {
-		const action: DbAction = {
+		const id = nanoid();
+
+		console.log(id);
+
+		const action: Action = {
 			...options,
 			timestamp: Date.now(),
+			id,
 		};
 
 		this.db.get('audit').push(action).write();
 	}
 
 	public remove(id: string): void {
-		this.db.get('audit').remove((action) => action.timestamp.toString() === id);
+		this.db
+			.get('audit')
+			.remove((audit) => audit.id === id)
+			.write();
 	}
 
-	public get(id: string): Action | void {
-		const action = this.db
-			.get('audit')
-			.find((action) => action.timestamp.toString() === id)
-			.value();
-
-		if (action)
-			return {
-				...action,
-				id,
-			};
-
-		return;
+	public get(options: { from: number; to: number }): Action[] | void {
+		return this.db.get('audit').slice(options.from, options.to).value();
 	}
 }

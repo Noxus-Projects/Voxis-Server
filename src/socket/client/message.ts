@@ -1,3 +1,5 @@
+import { nanoid } from 'nanoid';
+
 import { Permission } from '@models/user';
 import { MessageEvents } from '@models/events';
 
@@ -63,7 +65,7 @@ export default class MessagesManager {
 			author: this.user.id,
 			created: Date.now(),
 			content: data.content,
-			id: Date.now().toString(),
+			id: nanoid(),
 		};
 
 		this.database.messages.push(data.channel, message);
