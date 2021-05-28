@@ -73,6 +73,7 @@ export default class API {
 
 			this.database.cache.set(token, data.id);
 		}
+
 		next();
 	}
 

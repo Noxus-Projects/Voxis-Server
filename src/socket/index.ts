@@ -1,7 +1,10 @@
 import { Socket, Server } from 'socket.io';
 import { ExtendedError } from 'socket.io/dist/namespace';
+import { instrument } from '@socket.io/admin-ui';
+
 import chalk from 'chalk';
 import http from 'http';
+import { hash } from 'bcrypt';
 
 import Database from '@utils/database';
 import Discord from '@utils/discord';
@@ -12,6 +15,8 @@ type Next = (err?: ExtendedError) => void;
 
 export const EXPIRY_TIME = parseInt(process.env.CACHE_TIMEOUT ?? '') || 60000;
 
+const SALT_ROUNDS = 10;
+
 const connectionLog = (state: string, id: string, socketId: string) =>
 	console.log(chalk.yellow('SOCKET'), state, '-', chalk.cyan(id), `(${socketId})`);
 
@@ -21,12 +26,26 @@ export default class WebSocket {
 
 	constructor(server: http.Server, database: Database) {
 		this.io = new Server(server, {
-			path: '/socket',
+			// path: '/socket',
 			cors: {
-				origin: ['http://localhost:8888'],
+				origin: ['http://localhost:8888', 'https://admin.socket.io'],
 				methods: ['GET', 'POST'],
+				credentials: true,
 			},
 		});
+
+		if (process.env.ADMIN_PASSWORD && process.env.ADMIN_USERNAME) {
+			hash(process.env.ADMIN_PASSWORD, SALT_ROUNDS, (err, hash) => {
+				instrument(this.io, {
+					namespaceName: '/admin',
+					auth: {
+						password: hash,
+						username: process.env.ADMIN_USERNAME ?? 'admin',
+						type: 'basic',
+					},
+				});
+			});
+		}
 
 		this.db = database;
 
